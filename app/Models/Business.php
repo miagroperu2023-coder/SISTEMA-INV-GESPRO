@@ -29,7 +29,7 @@ class Business extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'business_user')
+        return $this->belongsToMany(User::class, 'business_users')
             ->using(BusinessUser::class)
             ->withPivot('rol')
             ->withTimestamps();
