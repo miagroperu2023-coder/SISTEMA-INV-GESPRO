@@ -17,7 +17,7 @@
 
         <div class="position-relative mb-3">
             <input type="text" wire:model.live.debounce.300ms="busqueda" class="form-control"
-                placeholder="Busca por nombre o color...">
+                placeholder="Busca por nombre o color..." autofocus>
 
             @if (count($resultados) > 0)
                 <div class="list-group position-absolute w-100 shadow" style="z-index: 10;">
@@ -35,37 +35,45 @@
         </div>
 
         @if (count($items) > 0)
-            <table class="table table-sm align-middle">
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Talla</th>
-                        <th>Color</th>
-                        <th style="width:90px">Cant.</th>
-                        <th style="width:110px">Precio</th>
-                        <th style="width:100px">Subtotal</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($items as $index => $item)
-                        <tr wire:key="item-{{ $item['variant_id'] }}">
-                            <td>{{ $item['nombre'] }}</td>
-                            <td>{{ $item['talla'] }}</td>
-                            <td>{{ $item['color'] }}</td>
-                            <td><input type="number" min="1"
-                                    wire:model.live="items.{{ $index }}.cantidad"
-                                    class="form-control form-control-sm"></td>
-                            <td><input type="number" step="0.01"
-                                    wire:model.live="items.{{ $index }}.precio_venta"
-                                    class="form-control form-control-sm"></td>
-                            <td>S/ {{ number_format($item['precio_venta'] * $item['cantidad'], 2) }}</td>
-                            <td><button wire:click="quitarItem({{ $index }})"
-                                    class="btn btn-sm btn-outline-danger">×</button></td>
+            <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Talla</th>
+                            <th>Color</th>
+                            <th style="width:90px">Cant.</th>
+                            <th style="width:110px">Precio</th>
+                            <th style="width:100px">Subtotal</th>
+                            <th></th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ($items as $index => $item)
+                            <tr wire:key="item-{{ $item['variant_id'] }}">
+                                <td>{{ $item['nombre'] }}</td>
+                                <td>{{ $item['talla'] }}</td>
+                                <td>{{ $item['color'] }}</td>
+                                <td>
+                                    <input type="number" min="1" inputmode="numeric"
+                                        wire:model.live="items.{{ $index }}.cantidad"
+                                        class="form-control form-control-sm">
+                                </td>
+                                <td>
+                                    <input type="number" step="0.01" inputmode="decimal"
+                                        wire:model.live="items.{{ $index }}.precio_venta"
+                                        class="form-control form-control-sm">
+                                </td>
+                                <td>S/ {{ number_format($item['precio_venta'] * $item['cantidad'], 2) }}</td>
+                                <td>
+                                    <button wire:click="quitarItem({{ $index }})"
+                                        class="btn btn-sm btn-outline-danger">×</button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
 
             <div class="mb-3">
                 <label class="form-label small">¿Qué comprobante necesita?</label>
@@ -127,8 +135,8 @@
                     <button wire:click="agregarPago" class="btn btn-sm btn-outline-secondary">+ Agregar pago</button>
                 </div>
                 @foreach ($pagos as $index => $pago)
-                    <div class="row g-2 mb-1" wire:key="pago-{{ $index }}">
-                        <div class="col-6">
+                    <div class="row g-2 mb-1 align-items-center" wire:key="pago-{{ $index }}">
+                        <div class="col-5">
                             <select wire:model="pagos.{{ $index }}.metodo_pago"
                                 class="form-select form-select-sm">
                                 <option value="yape">Yape</option>
@@ -138,10 +146,15 @@
                             </select>
                         </div>
                         <div class="col-4">
-                            <input type="number" step="0.01" wire:model="pagos.{{ $index }}.monto"
-                                class="form-control form-control-sm" placeholder="Monto">
+                            <input type="number" step="0.01" inputmode="decimal"
+                                wire:model="pagos.{{ $index }}.monto" class="form-control form-control-sm"
+                                placeholder="Monto">
                         </div>
                         <div class="col-2">
+                            <button wire:click="completarMonto({{ $index }})"
+                                class="btn btn-sm btn-outline-primary" title="Completar con lo que falta">✓</button>
+                        </div>
+                        <div class="col-1">
                             <button wire:click="quitarPago({{ $index }})"
                                 class="btn btn-sm btn-outline-danger">×</button>
                         </div>
@@ -160,7 +173,5 @@
             <p class="text-muted">Busca un producto para empezar.</p>
         @endif
     @endif
-
-
 
 </div>

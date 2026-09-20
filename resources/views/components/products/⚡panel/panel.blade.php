@@ -82,6 +82,15 @@
         </div>
     @endif
 
+    <div class="mb-3">
+        <input type="text" wire:model.live.debounce.300ms="buscarProducto" class="form-control"
+            placeholder="🔍 Buscar producto por nombre..." autofocus>
+    </div>
+
+    @if ($productos->isEmpty() && $buscarProducto)
+        <p class="text-muted text-center py-3">No se encontró ningún producto con "{{ $buscarProducto }}".</p>
+    @endif
+
     @foreach ($productos as $producto)
         <div class="card mb-3">
             <div class="card-body">

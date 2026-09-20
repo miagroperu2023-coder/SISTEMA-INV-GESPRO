@@ -8,37 +8,49 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{{ route('products.index') }}">Productos</a>
+                    <a class="nav-link {{ request()->routeIs('products.index') ? 'active' : '' }}"
+                        href="{{ route('products.index') }}">Productos</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('categories.index') }}">Categorias</a>
+                    <a class="nav-link {{ request()->routeIs('categories.index') ? 'active' : '' }}"
+                        href="{{ route('categories.index') }}">Categorias</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('sizesets.index') }}">Tallas</a>
+                    <a class="nav-link {{ request()->routeIs('sizesets.index') ? 'active' : '' }}"
+                        href="{{ route('sizesets.index') }}">Tallas</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('sales.index') }}">Ventas</a>
+                    <a class="nav-link {{ request()->routeIs('sales.index') ? 'active' : '' }}"
+                        href="{{ route('sales.index') }}">Ventas</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('caja.index') }}">Caja</a>
+                    <a class="nav-link {{ request()->routeIs('caja.index') ? 'active' : '' }}"
+                        href="{{ route('caja.index') }}">Caja</a>
                 </li>
-
 
                 @if (auth()->user()->esDuenoOAdmin())
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('sedes.index') }}">Sedes</a>
+                        <a class="nav-link {{ request()->routeIs('sedes.index') ? 'active' : '' }}"
+                            href="{{ route('sedes.index') }}">Sedes</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('equipo.index') }}">Equipo</a>
+                        <a class="nav-link {{ request()->routeIs('equipo.index') ? 'active' : '' }}"
+                            href="{{ route('equipo.index') }}">Equipo</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('reports.index') }}">Reportes</a>
+                        <a class="nav-link {{ request()->routeIs('reports.index') ? 'active' : '' }}"
+                            href="{{ route('reports.index') }}">Reportes</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('configuracion.index') ? 'active' : '' }}"
+                            href="{{ route('configuracion.index') }}">Negocio</a>
                     </li>
                 @endif
 

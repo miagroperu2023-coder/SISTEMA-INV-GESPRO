@@ -24,6 +24,9 @@ new class extends Component
         'stock' => 0,
     ];
 
+    // NUEVO: buscador de inventario
+    public $buscarProducto = '';
+
     public function abrirForm()
     {
         $this->reset(['nombre', 'descripcion', 'categoria_id', 'variantes']);
@@ -40,7 +43,7 @@ new class extends Component
         $product = Product::create([
             'nombre' => $this->nombre,
             'descripcion' => $this->descripcion,
-            'category_id' => $this->categoria_id,
+            'categoria_id' => $this->categoria_id,
         ]);
 
         foreach ($this->variantes as $sizeId => $data) {
@@ -104,7 +107,10 @@ new class extends Component
     public function render()
     {
         return $this->view([
-            'productos' => Product::with('category', 'variants.size')->latest()->get(),
+            'productos' => Product::with('category', 'variants.size')
+                ->when($this->buscarProducto, fn($q) => $q->where('nombre', 'like', '%' . $this->buscarProducto . '%'))
+                ->latest()
+                ->get(),
             'categorias' => Category::where('estado', 'ACTIVO')->get(),
             'todasLasTallas' => BusinessLocation::find(session('sede_activa_id'))->tallasActivas(),
         ]);

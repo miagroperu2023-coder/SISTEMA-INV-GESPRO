@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('nombre_comercial');
             $table->enum('tipo_documento', ['ruc', 'sin_ruc'])->default('sin_ruc');
             $table->enum('regimen_tributario', ['sin_ruc', 'nrus', 'general'])->default('sin_ruc');
+            $table->enum('estado_suscripcion', ['ACTIVO', 'SUSPENDIDO'])->default('ACTIVO');
+            $table->date('suscripcion_vence_el')->nullable();
             $table->string('numero_documento')->nullable();
             $table->string('razon_social')->nullable();
             $table->enum('estado', ['ACTIVO', 'INACTIVO'])->default('ACTIVO');

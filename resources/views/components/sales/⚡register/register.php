@@ -16,7 +16,9 @@ new class extends Component
     public $buscarCliente = '';
     public $clientesEncontrados = [];
 
-    public $pagos = [];
+    public $pagos = [
+        ['metodo_pago' => 'yape', 'monto' => null],
+    ];
 
     public function updatedBusqueda()
     {
@@ -63,6 +65,11 @@ new class extends Component
             'precio_venta' => $variant->precio_venta,
             'cantidad' => 1,
         ];
+
+        // asegura que siempre haya al menos 1 fila de pago lista para usar
+        if (empty($this->pagos)) {
+            $this->pagos = [['metodo_pago' => 'yape', 'monto' => null]];
+        }
 
         $this->busqueda = '';
         $this->resultados = [];
@@ -115,13 +122,25 @@ new class extends Component
 
     public function agregarPago()
     {
-        $this->pagos[] = ['metodo_pago' => 'efectivo', 'monto' => 0];
+        $this->pagos[] = ['metodo_pago' => 'yape', 'monto' => null];
     }
 
     public function quitarPago($index)
     {
         unset($this->pagos[$index]);
         $this->pagos = array_values($this->pagos);
+    }
+
+    // llena automáticamente el monto que falta para completar el total
+    public function completarMonto($index)
+    {
+        $sumaOtros = collect($this->pagos)
+            ->reject(fn($p, $i) => $i === $index)
+            ->sum(fn($p) => (float) ($p['monto'] ?? 0));
+
+        $faltante = $this->total - $sumaOtros;
+
+        $this->pagos[$index]['monto'] = max(0, round($faltante, 2));
     }
 
     public function getTotalProperty()
@@ -131,12 +150,13 @@ new class extends Component
 
     public function getTotalPagadoProperty()
     {
-        return collect($this->pagos)->sum('monto');
+        return collect($this->pagos)->sum(fn($pago) => (float) ($pago['monto'] ?? 0));
     }
 
     protected function negocioActivo()
     {
         $sede = \App\Models\BusinessLocation::find(session('sede_activa_id'));
+
         return $sede?->business;
     }
 
@@ -152,15 +172,16 @@ new class extends Component
             return;
         }
 
-        if (empty($this->items)) {
-            session()->flash('error', 'Agrega al menos un producto.');
-            return;
-        }
-
         if ($this->tipo_comprobante !== 'ticket' && !$this->customer_id) {
             session()->flash('error', 'Selecciona un cliente para emitir boleta/factura.');
             return;
         }
+
+        // normaliza montos vacíos (null) a 0 antes de validar y guardar
+        $this->pagos = collect($this->pagos)->map(function ($pago) {
+            $pago['monto'] = (float) ($pago['monto'] ?? 0);
+            return $pago;
+        })->toArray();
 
         if (round($this->totalPagado, 2) !== round($this->total, 2)) {
             session()->flash('error', 'La suma de los pagos no coincide con el total.');
@@ -230,8 +251,10 @@ new class extends Component
             $voucher->payments()->create($pago);
         }
 
-        $this->reset(['items', 'pagos', 'customer_id', 'tipo_comprobante']);
         session()->flash('ok', 'Venta registrada correctamente.');
+
+        $this->reset(['items', 'customer_id', 'tipo_comprobante']);
+        $this->pagos = [['metodo_pago' => 'yape', 'monto' => null]];
     }
 
     public function render()

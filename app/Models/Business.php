@@ -14,6 +14,12 @@ class Business extends Model
         'numero_documento',
         'razon_social',
         'regimen_tributario',
+        'estado_suscripcion',
+        'suscripcion_vence_el', // ← agregado
+    ];
+
+    protected $casts = [
+        'suscripcion_vence_el' => 'date',
     ];
 
     public function locations(): HasMany
@@ -23,7 +29,10 @@ class Business extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'business_users')->withPivot('rol')->withTimestamps();
+        return $this->belongsToMany(User::class, 'business_user')
+            ->using(BusinessUser::class)
+            ->withPivot('rol')
+            ->withTimestamps();
     }
 
     public function comprobantesPermitidos(): array
@@ -41,13 +50,6 @@ class Business extends Model
         return $this->regimen_tributario === 'general';
     }
 
-    public static function crearConSedeInicial(array $datosNegocio, string $nombreSede): self
-    {
-        $business = self::create($datosNegocio);
-        $business->agregarSede($nombreSede);
-        return $business;
-    }
-
     public function agregarSede(string $nombre, ?string $direccion = null, ?string $telefono = null): BusinessLocation
     {
         $sede = $this->locations()->create([
@@ -61,7 +63,13 @@ class Business extends Model
         VoucherSeries::create(['business_location_id' => $sede->id, 'tipo_comprobante' => 'boleta', 'serie' => 'B001']);
         VoucherSeries::create(['business_location_id' => $sede->id, 'tipo_comprobante' => 'factura', 'serie' => 'F001']);
 
-        // YA NO se auto-activa ninguna talla — el dueño las activa manualmente en /tallas
         return $sede;
+    }
+
+    public static function crearConSedeInicial(array $datosNegocio, string $nombreSede): self
+    {
+        $business = self::create($datosNegocio);
+        $business->agregarSede($nombreSede);
+        return $business;
     }
 }
