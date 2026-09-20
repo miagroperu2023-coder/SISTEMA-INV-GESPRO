@@ -32,7 +32,10 @@ class User extends Authenticatable
 
     public function businesses()
     {
-        return $this->belongsToMany(Business::class, 'business_users')->withPivot('rol')->withTimestamps();
+        return $this->belongsToMany(Business::class, 'business_users')
+            ->using(BusinessUser::class)
+            ->withPivot('rol')
+            ->withTimestamps();
     }
 
     public function sedesAsignadas()

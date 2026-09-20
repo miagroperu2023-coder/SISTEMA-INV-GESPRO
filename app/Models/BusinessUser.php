@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class BusinessUser extends Model
+class BusinessUser extends Pivot
 {
-    //
     protected $table = 'business_users';
 
     protected $fillable = [
