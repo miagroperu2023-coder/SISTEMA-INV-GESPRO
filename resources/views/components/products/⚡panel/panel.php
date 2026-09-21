@@ -43,7 +43,7 @@ new class extends Component
         $product = Product::create([
             'nombre' => $this->nombre,
             'descripcion' => $this->descripcion,
-            'categoria_id' => $this->categoria_id,
+            'category_id' => $this->categoria_id,
         ]);
 
         foreach ($this->variantes as $sizeId => $data) {
