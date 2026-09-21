@@ -17,38 +17,40 @@
         </div>
     </div>
 
-    <table class="table table-sm table-striped">
-        <thead>
-            <tr>
-                <th>Fecha</th>
-                <th>Comprobante</th>
-                <th>Producto</th>
-                <th>Talla</th>
-                <th>Color</th>
-                <th>Cant.</th>
-                <th>P. Venta</th>
-                <th>Subtotal</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($filas as $fila)
+    <div class="table-responsive">
+        <table class="table table-sm table-striped">
+            <thead>
                 <tr>
-                    <td>{{ $fila->fecha->format('d/m/Y') }}</td>
-                    <td>{{ $fila->comprobante }}</td>
-                    <td>{{ $fila->producto }}</td>
-                    <td>{{ $fila->talla }}</td>
-                    <td>{{ $fila->color }}</td>
-                    <td>{{ $fila->cantidad }}</td>
-                    <td>S/ {{ number_format($fila->precio_venta, 2) }}</td>
-                    <td>S/ {{ number_format($fila->subtotal, 2) }}</td>
+                    <th>Fecha</th>
+                    <th>Comprobante</th>
+                    <th>Producto</th>
+                    <th>Talla</th>
+                    <th>Color</th>
+                    <th>Cant.</th>
+                    <th>P. Venta</th>
+                    <th>Subtotal</th>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="8" class="text-center text-muted">No hay ventas en ese rango de fechas.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @forelse ($filas as $fila)
+                    <tr>
+                        <td>{{ $fila->fecha->format('d/m/Y') }}</td>
+                        <td>{{ $fila->comprobante }}</td>
+                        <td>{{ $fila->producto }}</td>
+                        <td>{{ $fila->talla }}</td>
+                        <td>{{ $fila->color }}</td>
+                        <td>{{ $fila->cantidad }}</td>
+                        <td>S/ {{ number_format($fila->precio_venta, 2) }}</td>
+                        <td>S/ {{ number_format($fila->subtotal, 2) }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="8" class="text-center text-muted">No hay ventas en ese rango de fechas.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 
     <div class="row g-3">
         <div class="col-md-4">
