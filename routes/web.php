@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\cashier\CashierShiftController;
 use App\Http\Controllers\category\CategoryController;
+use App\Http\Controllers\client\ClientController;
 use App\Http\Controllers\configuracion\ConfiguracionController;
 use App\Http\Controllers\equipo\EquipoController;
 use App\Http\Controllers\product\ProductController;
@@ -32,11 +33,12 @@ Route::middleware(['auth', 'super_admin'])->group(function () {
 Route::middleware(['auth', 'suscripcion_activa'])->group(function () {
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
-    Route::get('/productos', [ProductController::class, 'index'])->name('products.index');
     Route::get('/ventas', [SalesController::class, 'index'])->name('sales.index');
     Route::get('/caja', [CashierShiftController::class, 'index'])->name('caja.index');
+    Route::get('/productos', [ProductController::class, 'index'])->name('products.index');
     Route::get('/categorias', [CategoryController::class, 'index'])->name('categories.index');
     Route::get('/tallas', [SizeSetController::class, 'index'])->name('sizesets.index');
+    Route::get('/clientes', [ClientController::class, 'index'])->name('clients.index');
 
     Route::middleware('dueno_admin')->group(function () {
         Route::get('/sedes', [SedeController::class, 'index'])->name('sedes.index');

@@ -7,6 +7,17 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('sales.index') ? 'active' : '' }}"
+                        href="{{ route('sales.index') }}">Ventas</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('caja.index') ? 'active' : '' }}"
+                        href="{{ route('caja.index') }}">Caja</a>
+                </li>
+
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('products.index') ? 'active' : '' }}"
                         href="{{ route('products.index') }}">Productos</a>
@@ -22,15 +33,6 @@
                         href="{{ route('sizesets.index') }}">Tallas</a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('sales.index') ? 'active' : '' }}"
-                        href="{{ route('sales.index') }}">Ventas</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('caja.index') ? 'active' : '' }}"
-                        href="{{ route('caja.index') }}">Caja</a>
-                </li>
 
                 @if (auth()->user()->esDuenoOAdmin())
                     <li class="nav-item">
@@ -51,6 +53,11 @@
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('configuracion.index') ? 'active' : '' }}"
                             href="{{ route('configuracion.index') }}">Negocio</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('clients.index') ? 'active' : '' }}"
+                            href="{{ route('clients.index') }}">Clientes</a>
                     </li>
                 @endif
 
