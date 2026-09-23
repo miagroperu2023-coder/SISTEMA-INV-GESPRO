@@ -18,23 +18,25 @@
                         href="{{ route('caja.index') }}">Caja</a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('products.index') ? 'active' : '' }}"
-                        href="{{ route('products.index') }}">Productos</a>
-                </li>
 
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('categories.index') ? 'active' : '' }}"
-                        href="{{ route('categories.index') }}">Categorias</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('sizesets.index') ? 'active' : '' }}"
-                        href="{{ route('sizesets.index') }}">Tallas</a>
-                </li>
 
 
                 @if (auth()->user()->esDuenoOAdmin())
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('products.index') ? 'active' : '' }}"
+                            href="{{ route('products.index') }}">Productos</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('categories.index') ? 'active' : '' }}"
+                            href="{{ route('categories.index') }}">Categorias</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('sizesets.index') ? 'active' : '' }}"
+                            href="{{ route('sizesets.index') }}">Tallas</a>
+                    </li>
+
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('sedes.index') ? 'active' : '' }}"
                             href="{{ route('sedes.index') }}">Sedes</a>
@@ -55,13 +57,13 @@
                             href="{{ route('configuracion.index') }}">Negocio</a>
                     </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('clients.index') ? 'active' : '' }}"
-                            href="{{ route('clients.index') }}">Clientes</a>
-                    </li>
+                    @livewire('sede.sede-selector')
                 @endif
 
-                @livewire('sede.sede-selector')
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('clients.index') ? 'active' : '' }}"
+                        href="{{ route('clients.index') }}">Clientes</a>
+                </li>
 
                 <li class="nav-item">
                     <a class="nav-link">Hola: {{ auth()->user()->name }} </a>

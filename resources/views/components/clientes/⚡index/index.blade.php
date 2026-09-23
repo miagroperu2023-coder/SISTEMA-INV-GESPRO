@@ -71,31 +71,29 @@
     <input type="text" wire:model.live.debounce.300ms="buscar" class="form-control mb-3"
         placeholder="🔍 Buscar por nombre o documento...">
 
-    <div class="table-responsive">
-        <table class="table table-sm align-middle">
-            <thead>
+    <table class="table table-sm align-middle">
+        <thead>
+            <tr>
+                <th>Tipo</th>
+                <th>Documento</th>
+                <th>Nombre / Razón social</th>
+                <th>Dirección</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse ($clientes as $cliente)
                 <tr>
-                    <th>Tipo</th>
-                    <th>Documento</th>
-                    <th>Nombre / Razón social</th>
-                    <th>Dirección</th>
+                    <td>{{ strtoupper($cliente->tipo_documento) }}</td>
+                    <td>{{ $cliente->numero_documento }}</td>
+                    <td>{{ $cliente->nombre_razon_social }}</td>
+                    <td>{{ $cliente->direccion ?? '—' }}</td>
                 </tr>
-            </thead>
-            <tbody>
-                @forelse ($clientes as $cliente)
-                    <tr>
-                        <td>{{ strtoupper($cliente->tipo_documento) }}</td>
-                        <td>{{ $cliente->numero_documento }}</td>
-                        <td>{{ $cliente->nombre_razon_social }}</td>
-                        <td>{{ $cliente->direccion ?? '—' }}</td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="4" class="text-center text-muted">Aún no hay clientes registrados.</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+            @empty
+                <tr>
+                    <td colspan="4" class="text-center text-muted">Aún no hay clientes registrados.</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
 
 </div>

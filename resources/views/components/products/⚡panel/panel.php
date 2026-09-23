@@ -19,12 +19,12 @@ new class extends Component
     public $nuevaVariante = [
         'size_id' => '',
         'color' => '',
-        'precio_compra' => 0,
-        'precio_venta' => 0,
-        'stock' => 0,
+        'precio_compra' => null,
+        'precio_venta' => null,
+        'stock' => null,
     ];
 
-    // NUEVO: buscador de inventario
+    // buscador de inventario
     public $buscarProducto = '';
 
     public function abrirForm()
@@ -82,7 +82,14 @@ new class extends Component
     public function abrirNuevaVariante($productId)
     {
         $this->nuevaVarianteProductoId = $this->nuevaVarianteProductoId === $productId ? null : $productId;
-        $this->nuevaVariante = ['size_id' => '', 'color' => '', 'precio_compra' => 0, 'precio_venta' => 0, 'stock' => 0];
+        $this->nuevaVariante = [
+            'size_id' => '',
+            'color' => '',
+            'precio_compra' => null,
+            'precio_venta' => null,
+            'stock' => null,
+        ];
+        $this->resetErrorBag();
     }
 
     public function guardarNuevaVariante($productId)
@@ -90,26 +97,47 @@ new class extends Component
         $this->validate([
             'nuevaVariante.size_id' => 'required|exists:size_sets,id',
             'nuevaVariante.color' => 'required|string',
+            'nuevaVariante.precio_compra' => 'nullable|numeric|min:0',
+            'nuevaVariante.precio_venta' => 'nullable|numeric|min:0',
+            'nuevaVariante.stock' => 'nullable|integer|min:0',
+        ], [
+            'nuevaVariante.size_id.required' => 'Selecciona una talla.',
+            'nuevaVariante.color.required' => 'El color es obligatorio.',
         ]);
+
+        $existe = ProductVariant::where('product_id', $productId)
+            ->where('size_id', $this->nuevaVariante['size_id'])
+            ->where('color', $this->nuevaVariante['color'])
+            ->exists();
+
+        if ($existe) {
+            $this->addError('nuevaVariante.color', 'Ya existe una variante con esa talla y color para este producto.');
+            return;
+        }
 
         Product::find($productId)->variants()->create([
             'size_id' => $this->nuevaVariante['size_id'],
             'color' => $this->nuevaVariante['color'],
-            'precio_compra' => $this->nuevaVariante['precio_compra'],
-            'precio_venta' => $this->nuevaVariante['precio_venta'],
-            'stock' => $this->nuevaVariante['stock'],
+            'precio_compra' => $this->nuevaVariante['precio_compra'] ?? 0,
+            'precio_venta' => $this->nuevaVariante['precio_venta'] ?? 0,
+            'stock' => $this->nuevaVariante['stock'] ?? 0,
             'sku' => strtoupper(uniqid('SKU')),
         ]);
 
         $this->nuevaVarianteProductoId = null;
+        session()->flash('ok', 'Variante agregada con éxito.');
     }
 
     public function render()
     {
         return $this->view([
-            'productos' => Product::with('category', 'variants.size')
+            'productos' => Product::with([
+                'category',
+                'variants' => fn($q) => $q->orderBy('color')->orderBy('size_id'),
+                'variants.size',
+            ])
                 ->when($this->buscarProducto, fn($q) => $q->where('nombre', 'like', '%' . $this->buscarProducto . '%'))
-                ->latest()
+                ->orderBy('nombre')
                 ->get(),
             'categorias' => Category::where('estado', 'ACTIVO')->get(),
             'todasLasTallas' => BusinessLocation::find(session('sede_activa_id'))->tallasActivas(),

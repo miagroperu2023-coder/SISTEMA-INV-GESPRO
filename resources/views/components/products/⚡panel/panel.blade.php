@@ -163,14 +163,14 @@
                     </table>
                 @endif
 
-                <button class="btn btn-sm btn-outline-secondary" wire:click="abrirNuevaVariante({{ $producto->id }})">
+                <button class="btn btn-sm btn-primary" wire:click="abrirNuevaVariante({{ $producto->id }})">
                     + Agregar variante
                 </button>
 
                 @if ($nuevaVarianteProductoId === $producto->id)
                     <div class="row g-2 mt-2">
                         <div class="col-md-2">
-                            <select wire:model="nuevaVariante.size_id" class="form-select form-select-sm">
+                            <select wire:model="nuevaVariante.size_id" class="form-select form-select-sm" required>
                                 <option value="">Talla</option>
                                 @foreach ($todasLasTallas as $tipo => $tallas)
                                     <optgroup label="{{ $tipo }}">
@@ -180,22 +180,37 @@
                                     </optgroup>
                                 @endforeach
                             </select>
+                            @error('nuevaVariante.size_id')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-3">
                             <input type="text" wire:model="nuevaVariante.color" placeholder="Color"
                                 class="form-control form-control-sm">
+                            @error('nuevaVariante.color')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-2">
                             <input type="number" step="0.01" wire:model="nuevaVariante.precio_compra"
                                 placeholder="Compra" class="form-control form-control-sm">
+                            @error('nuevaVariante.precio_compra')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-2">
                             <input type="number" step="0.01" wire:model="nuevaVariante.precio_venta"
                                 placeholder="Venta" class="form-control form-control-sm">
+                            @error('nuevaVariante.precio_venta')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-1">
                             <input type="number" wire:model="nuevaVariante.stock" placeholder="Stock"
                                 class="form-control form-control-sm">
+                            @error('nuevaVariante.stock')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-2">
                             <button wire:click="guardarNuevaVariante({{ $producto->id }})"

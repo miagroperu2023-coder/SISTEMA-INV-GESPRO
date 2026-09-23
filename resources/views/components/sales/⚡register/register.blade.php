@@ -107,24 +107,34 @@
             </div>
 
             @if ($tipo_comprobante !== 'ticket')
-                <div class="mb-3 position-relative">
-                    <label class="form-label small">Cliente</label>
-                    <input type="text" wire:model.live.debounce.300ms="buscarCliente"
-                        class="form-control form-control-sm" placeholder="DNI/RUC o nombre">
+                <div class="mb-3">
+                    <label class="form-label small">
+                        {{ $tipo_comprobante === 'boleta' ? 'DNI del cliente' : 'RUC de la empresa' }}
+                    </label>
 
-                    @if (count($clientesEncontrados) > 0)
-                        <div class="list-group position-absolute w-100 shadow" style="z-index: 10;">
-                            @foreach ($clientesEncontrados as $cliente)
-                                <button type="button" wire:click="seleccionarCliente({{ $cliente->id }})"
-                                    class="list-group-item list-group-item-action">
-                                    {{ $cliente->nombre_razon_social }} — {{ $cliente->numero_documento }}
-                                </button>
-                            @endforeach
-                        </div>
+                    <div class="input-group">
+                        <input type="text" wire:model="numero_documento"
+                            maxlength="{{ $tipo_comprobante === 'boleta' ? 8 : 11 }}" inputmode="numeric"
+                            class="form-control form-control-sm"
+                            placeholder="{{ $tipo_comprobante === 'boleta' ? 'Ej: 45501816' : 'Ej: 10763957433' }}">
+                        <button wire:click="buscarPorDocumento" wire:loading.attr="disabled"
+                            class="btn btn-sm btn-outline-primary">
+                            <span wire:loading.remove wire:target="buscarPorDocumento">Buscar</span>
+                            <span wire:loading wire:target="buscarPorDocumento">Buscando...</span>
+                        </button>
+                    </div>
+
+                    @if ($clienteEncontradoNombre)
+                        <p class="small text-success mt-1">✓ {{ $clienteEncontradoNombre }}</p>
                     @endif
 
-                    @if ($customer_id)
-                        <p class="small text-success mt-1">Cliente seleccionado ✓</p>
+                    @if ($clienteNoEncontrado)
+                        <div
+                            class="alert alert-warning py-2 small mt-2 d-flex justify-content-between align-items-center">
+                            <span>No se encontró este documento. Regístralo primero como cliente.</span>
+                            <a href="{{ route('clientes.index') }}" target="_blank"
+                                class="btn btn-sm btn-warning">Registrar cliente</a>
+                        </div>
                     @endif
                 </div>
             @endif

@@ -35,12 +35,12 @@ Route::middleware(['auth', 'suscripcion_activa'])->group(function () {
 
     Route::get('/ventas', [SalesController::class, 'index'])->name('sales.index');
     Route::get('/caja', [CashierShiftController::class, 'index'])->name('caja.index');
-    Route::get('/productos', [ProductController::class, 'index'])->name('products.index');
-    Route::get('/categorias', [CategoryController::class, 'index'])->name('categories.index');
-    Route::get('/tallas', [SizeSetController::class, 'index'])->name('sizesets.index');
     Route::get('/clientes', [ClientController::class, 'index'])->name('clients.index');
 
     Route::middleware('dueno_admin')->group(function () {
+        Route::get('/productos', [ProductController::class, 'index'])->name('products.index');
+        Route::get('/categorias', [CategoryController::class, 'index'])->name('categories.index');
+        Route::get('/tallas', [SizeSetController::class, 'index'])->name('sizesets.index');
         Route::get('/sedes', [SedeController::class, 'index'])->name('sedes.index');
         Route::get('/equipo', [EquipoController::class, 'index'])->name('equipo.index');
         Route::get('/reportes', [ReportController::class, 'index'])->name('reports.index');
