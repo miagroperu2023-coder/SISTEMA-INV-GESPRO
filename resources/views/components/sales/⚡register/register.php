@@ -13,8 +13,11 @@ new class extends Component
 
     public $tipo_comprobante = 'ticket';
     public $customer_id = null;
-    public $buscarCliente = '';
-    public $clientesEncontrados = [];
+
+    // búsqueda de cliente por documento (DNI/RUC)
+    public $numero_documento = '';
+    public $clienteEncontradoNombre = null;
+    public $clienteNoEncontrado = false;
 
     public $pagos = [
         ['metodo_pago' => 'yape', 'monto' => null],
@@ -66,7 +69,6 @@ new class extends Component
             'cantidad' => 1,
         ];
 
-        // asegura que siempre haya al menos 1 fila de pago lista para usar
         if (empty($this->pagos)) {
             $this->pagos = [['metodo_pago' => 'yape', 'monto' => null]];
         }
@@ -99,25 +101,36 @@ new class extends Component
         }
     }
 
-    public function updatedBuscarCliente()
+    // se ejecuta al cambiar entre ticket/boleta/factura: limpia todo lo del cliente anterior
+    public function updatedTipoComprobante()
     {
-        if (strlen($this->buscarCliente) < 2) {
-            $this->clientesEncontrados = [];
+        $this->numero_documento = '';
+        $this->customer_id = null;
+        $this->clienteEncontradoNombre = null;
+        $this->clienteNoEncontrado = false;
+    }
+
+    public function buscarPorDocumento()
+    {
+        $this->clienteEncontradoNombre = null;
+        $this->clienteNoEncontrado = false;
+        $this->customer_id = null;
+
+        if (empty($this->numero_documento)) {
+            session()->flash('error', 'Ingresa un número de documento para buscar.');
             return;
         }
 
-        $this->clientesEncontrados = Customer::where('business_location_id', session('sede_activa_id'))
-            ->where(function ($q) {
-                $q->where('numero_documento', 'like', '%' . $this->buscarCliente . '%')
-                    ->orWhere('nombre_razon_social', 'like', '%' . $this->buscarCliente . '%');
-            })->limit(5)->get();
-    }
+        $cliente = Customer::where('business_location_id', session('sede_activa_id'))
+            ->where('numero_documento', $this->numero_documento)
+            ->first();
 
-    public function seleccionarCliente($clienteId)
-    {
-        $this->customer_id = $clienteId;
-        $this->buscarCliente = '';
-        $this->clientesEncontrados = [];
+        if ($cliente) {
+            $this->customer_id = $cliente->id;
+            $this->clienteEncontradoNombre = $cliente->nombre_razon_social;
+        } else {
+            $this->clienteNoEncontrado = true;
+        }
     }
 
     public function agregarPago()
@@ -131,7 +144,6 @@ new class extends Component
         $this->pagos = array_values($this->pagos);
     }
 
-    // llena automáticamente el monto que falta para completar el total
     public function completarMonto($index)
     {
         $sumaOtros = collect($this->pagos)
@@ -173,11 +185,10 @@ new class extends Component
         }
 
         if ($this->tipo_comprobante !== 'ticket' && !$this->customer_id) {
-            session()->flash('error', 'Selecciona un cliente para emitir boleta/factura.');
+            session()->flash('error', 'Busca y selecciona un cliente válido para emitir boleta/factura.');
             return;
         }
 
-        // normaliza montos vacíos (null) a 0 antes de validar y guardar
         $this->pagos = collect($this->pagos)->map(function ($pago) {
             $pago['monto'] = (float) ($pago['monto'] ?? 0);
             return $pago;
@@ -253,7 +264,7 @@ new class extends Component
 
         session()->flash('ok', 'Venta registrada correctamente.');
 
-        $this->reset(['items', 'customer_id', 'tipo_comprobante']);
+        $this->reset(['items', 'customer_id', 'tipo_comprobante', 'numero_documento', 'clienteEncontradoNombre', 'clienteNoEncontrado']);
         $this->pagos = [['metodo_pago' => 'yape', 'monto' => null]];
     }
 
