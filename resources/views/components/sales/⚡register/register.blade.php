@@ -133,7 +133,7 @@
                             class="alert alert-warning py-2 small mt-2 d-flex justify-content-between align-items-center">
                             <span>No se encontró este documento. Regístralo primero como cliente.</span>
                             <a href="{{ route('clients.index') }}" target="_blank"
-                                class="btn btn-sm btn-warning">Registrar cliente</a>
+                                class="btn btn-sm btn-warning">Registrar cliente.</a>
                         </div>
                     @endif
                 </div>
