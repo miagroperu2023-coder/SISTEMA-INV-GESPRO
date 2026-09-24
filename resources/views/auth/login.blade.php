@@ -5,7 +5,15 @@
         <div class="card shadow-sm" style="max-width: 420px; width: 100%;">
             <div class="card-body p-4">
 
-                <h2 class="h4 fw-bold text-center mb-4">Iniciar sesión</h2>
+                <h2 class="h4 fw-bold text-center mb-4">
+                    Iniciar sesión
+                </h2>
+
+                <div class="text-center mx-auto mb-3">
+                    <img src="{{ asset('logo.jpeg') }}" alt="{{ asset('logo.jpeg') }}" class="img-fluid"
+                        style="width: 145px;height: 145px;border-radius: 10%">
+                </div>
+
 
                 @if (session('error'))
                     <div class="alert alert-danger">{{ session('error') }}</div>

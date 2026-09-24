@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class RegisterController extends Controller
@@ -26,9 +27,17 @@ class RegisterController extends Controller
             'nombre_comercial' => 'required|string|max:255',
             'nombre_sede' => 'required|string|max:255',
             'tipo_documento' => 'required|in:ruc,sin_ruc',
-            'numero_documento' => 'required_if:tipo_documento,ruc|nullable|string|max:20',
+            'numero_documento' => [
+                'required_if:tipo_documento,ruc',
+                'nullable',
+                'string',
+                'max:20',
+                Rule::unique('businesses', 'numero_documento'),
+            ],
             'razon_social' => 'required_if:tipo_documento,ruc|nullable|string|max:255',
             'regimen_tributario' => 'required_if:tipo_documento,ruc|nullable|in:nrus,general',
+        ], [
+            'numero_documento.unique' => 'Este RUC ya está registrado por otro negocio en el sistema.',
         ]);
 
         DB::transaction(function () use ($validated) {

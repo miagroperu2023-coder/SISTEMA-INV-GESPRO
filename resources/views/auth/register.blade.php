@@ -8,6 +8,11 @@
                 <h2 class="h4 fw-bold mb-1">Crea tu cuenta y tu negocio</h2>
                 <p class="text-muted mb-4">Regístrate para empezar a usar el sistema</p>
 
+                <div class="text-center mx-auto mb-3">
+                    <img src="{{ asset('logo.jpeg') }}" alt="{{ asset('logo.jpeg') }}" class="img-fluid"
+                        style="width: 145px;height: 145px;border-radius: 10%">
+                </div>
+
                 <form method="POST" action="{{ route('register.store') }}">
                     @csrf
 

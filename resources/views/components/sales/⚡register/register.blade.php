@@ -7,7 +7,13 @@
         </div>
     @else
         @if (session('ok'))
-            <div class="alert alert-success">{{ session('ok') }}</div>
+            <div class="alert alert-success d-flex justify-content-between align-items-center">
+                <span>{{ session('ok') }}</span>
+                @if (session('venta_id'))
+                    <a href="{{ route('ventas.imprimir', session('venta_id')) }}" target="_blank"
+                        class="btn btn-sm btn-outline-success">Imprimir</a>
+                @endif
+            </div>
         @endif
         @if (session('error'))
             <div class="alert alert-danger">{{ session('error') }}</div>

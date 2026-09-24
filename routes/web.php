@@ -34,6 +34,7 @@ Route::middleware(['auth', 'suscripcion_activa'])->group(function () {
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
     Route::get('/ventas', [SalesController::class, 'index'])->name('sales.index');
+    Route::get('/ventas/{voucher}/imprimir', [SalesController::class, 'show'])->name('ventas.imprimir');
     Route::get('/caja', [CashierShiftController::class, 'index'])->name('caja.index');
     Route::get('/clientes', [ClientController::class, 'index'])->name('clients.index');
 

@@ -59,4 +59,9 @@ class Voucher extends Model
     {
         return $this->belongsTo(CashierShift::class);
     }
+
+    public function businessLocation(): BelongsTo
+    {
+        return $this->belongsTo(BusinessLocation::class);
+    }
 }

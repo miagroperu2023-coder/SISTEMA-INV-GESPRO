@@ -4,6 +4,8 @@ use Livewire\Component;
 use App\Models\Customer;
 use App\Models\ProductVariant;
 use App\Models\Voucher;
+use App\Models\VoucherSeries;
+use Illuminate\Support\Facades\DB;
 
 new class extends Component
 {
@@ -234,35 +236,56 @@ new class extends Component
             ]);
         });
 
-        $voucher = Voucher::create([
-            'cashier_shift_id' => session('cashier_shift_id'),
-            'customer_id' => $this->customer_id,
-            'tipo_comprobante' => $this->tipo_comprobante,
-            'estado' => $this->tipo_comprobante === 'ticket' ? null : 'pendiente',
-            'subtotal' => $itemsCalculados->sum('valor_venta'),
-            'igv_total' => $itemsCalculados->sum('igv'),
-            'total' => $this->total,
-            'fecha' => now()->toDateString(),
-        ]);
+        try {
+            $voucher = DB::transaction(function () use ($itemsCalculados) {
+                $serie = null;
+                $numero = null;
 
-        foreach ($itemsCalculados as $item) {
-            $voucher->items()->create([
-                'product_variant_id' => $item['variant_id'],
-                'cantidad' => $item['cantidad'],
-                'precio_venta' => $item['precio_venta'],
-                'valor_venta' => $item['valor_venta'],
-                'igv' => $item['igv'],
-                'subtotal' => $item['subtotal'],
-            ]);
+                if ($this->tipo_comprobante !== 'ticket') {
+                    $reserva = VoucherSeries::reservarSiguiente(session('sede_activa_id'), $this->tipo_comprobante);
+                    $serie = $reserva['serie'];
+                    $numero = $reserva['numero'];
+                }
 
-            ProductVariant::where('id', $item['variant_id'])->decrement('stock', $item['cantidad']);
-        }
+                $voucher = Voucher::create([
+                    'cashier_shift_id' => session('cashier_shift_id'),
+                    'customer_id' => $this->customer_id,
+                    'tipo_comprobante' => $this->tipo_comprobante,
+                    'serie' => $serie,
+                    'numero' => $numero,
+                    'estado' => $this->tipo_comprobante === 'ticket' ? null : 'pendiente',
+                    'subtotal' => $itemsCalculados->sum('valor_venta'),
+                    'igv_total' => $itemsCalculados->sum('igv'),
+                    'total' => $this->total,
+                    'fecha' => now()->toDateString(),
+                ]);
 
-        foreach ($this->pagos as $pago) {
-            $voucher->payments()->create($pago);
+                foreach ($itemsCalculados as $item) {
+                    $voucher->items()->create([
+                        'product_variant_id' => $item['variant_id'],
+                        'cantidad' => $item['cantidad'],
+                        'precio_venta' => $item['precio_venta'],
+                        'valor_venta' => $item['valor_venta'],
+                        'igv' => $item['igv'],
+                        'subtotal' => $item['subtotal'],
+                    ]);
+
+                    ProductVariant::where('id', $item['variant_id'])->decrement('stock', $item['cantidad']);
+                }
+
+                foreach ($this->pagos as $pago) {
+                    $voucher->payments()->create($pago);
+                }
+
+                return $voucher;
+            });
+        } catch (\RuntimeException $e) {
+            session()->flash('error', $e->getMessage());
+            return;
         }
 
         session()->flash('ok', 'Venta registrada correctamente.');
+        session()->flash('venta_id', $voucher->id);
 
         $this->reset(['items', 'customer_id', 'tipo_comprobante', 'numero_documento', 'clienteEncontradoNombre', 'clienteNoEncontrado']);
         $this->pagos = [['metodo_pago' => 'yape', 'monto' => null]];

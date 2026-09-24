@@ -9,6 +9,8 @@
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     @livewireStyles
 
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('logo.jpeg') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('logo.jpeg') }}">
     <style>
         body {
             background-color: #f1f4f9;

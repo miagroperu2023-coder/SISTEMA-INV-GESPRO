@@ -5,8 +5,10 @@ namespace App\Exports;
 use App\Models\Voucher;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 
-class VentasExport implements FromCollection
+class VentasExport implements FromCollection, WithHeadings, WithMapping
 {
     protected $fechaInicio;
     protected $fechaFin;

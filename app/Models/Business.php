@@ -15,11 +15,14 @@ class Business extends Model
         'razon_social',
         'regimen_tributario',
         'estado_suscripcion',
-        'suscripcion_vence_el', // ← agregado
+        'suscripcion_vence_el',
+        'nubefact_token',
+        'facturacion_electronica_activa',
     ];
 
     protected $casts = [
         'suscripcion_vence_el' => 'date',
+        'nubefact_token' => 'encrypted',
     ];
 
     public function locations(): HasMany
@@ -50,6 +53,13 @@ class Business extends Model
         return $this->regimen_tributario === 'general';
     }
 
+    public function puedeEmitirElectronico(): bool
+    {
+        return $this->tipo_documento === 'ruc'
+            && $this->facturacion_electronica_activa
+            && !empty($this->nubefact_token);
+    }
+
     public function agregarSede(string $nombre, ?string $direccion = null, ?string $telefono = null): BusinessLocation
     {
         $sede = $this->locations()->create([
@@ -60,8 +70,10 @@ class Business extends Model
 
         $sede->cashiers()->create(['nombre' => 'Caja 1']);
 
-        VoucherSeries::create(['business_location_id' => $sede->id, 'tipo_comprobante' => 'boleta', 'serie' => 'B001']);
-        VoucherSeries::create(['business_location_id' => $sede->id, 'tipo_comprobante' => 'factura', 'serie' => 'F001']);
+        if ($this->tipo_documento === 'ruc') {
+            VoucherSeries::create(['business_location_id' => $sede->id, 'tipo_comprobante' => 'boleta', 'serie' => 'B001']);
+            VoucherSeries::create(['business_location_id' => $sede->id, 'tipo_comprobante' => 'factura', 'serie' => 'F001']);
+        }
 
         return $sede;
     }
