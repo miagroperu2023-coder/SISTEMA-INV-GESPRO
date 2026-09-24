@@ -17,6 +17,7 @@ class Business extends Model
         'estado_suscripcion',
         'suscripcion_vence_el',
         'nubefact_token',
+        'nubefact_ruta',
         'facturacion_electronica_activa',
     ];
 
@@ -57,7 +58,8 @@ class Business extends Model
     {
         return $this->tipo_documento === 'ruc'
             && $this->facturacion_electronica_activa
-            && !empty($this->nubefact_token);
+            && !empty($this->nubefact_token)
+            && !empty($this->nubefact_ruta);
     }
 
     public function agregarSede(string $nombre, ?string $direccion = null, ?string $telefono = null): BusinessLocation

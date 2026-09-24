@@ -9,6 +9,14 @@ new class extends Component
 
     public function mount()
     {
+        $sede = \App\Models\BusinessLocation::find(session('sede_activa_id'));
+        $business = $sede?->business;
+
+        if (!$business || $business->tipo_documento !== 'ruc') {
+            session()->flash('error', 'Este negocio no tiene RUC, no necesita configurar series de comprobantes.');
+            $this->redirect(route('sales.index'));
+            return;
+        }
         $this->cargarSeries();
     }
 

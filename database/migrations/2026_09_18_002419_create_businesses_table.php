@@ -17,6 +17,7 @@ return new class extends Migration
             $table->enum('tipo_documento', ['ruc', 'sin_ruc'])->default('sin_ruc');
             $table->enum('regimen_tributario', ['sin_ruc', 'nrus', 'general'])->default('sin_ruc');
             $table->text('nubefact_token')->nullable();
+            $table->string('nubefact_ruta')->nullable();
             $table->boolean('facturacion_electronica_activa');
             $table->enum('estado_suscripcion', ['ACTIVO', 'SUSPENDIDO'])->default('ACTIVO');
             $table->date('suscripcion_vence_el')->nullable();

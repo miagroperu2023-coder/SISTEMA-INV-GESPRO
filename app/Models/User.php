@@ -59,6 +59,12 @@ class User extends Authenticatable
         return $sedesComoDueno->merge($sedesComoVendedor)->unique('id');
     }
 
+    public function negocioActivo(): ?\App\Models\Business
+    {
+        $sede = \App\Models\BusinessLocation::find(session('sede_activa_id'));
+        return $sede?->business;
+    }
+
     //para saber el rol de la sede activa
     public function rolEnSedeActiva(): ?string
     {

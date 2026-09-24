@@ -11,6 +11,7 @@ use App\Http\Controllers\product\ProductController;
 use App\Http\Controllers\report\ReportController;
 use App\Http\Controllers\sales\SalesController;
 use App\Http\Controllers\sede\SedeController;
+use App\Http\Controllers\serie\SerieController;
 use App\Http\Controllers\sizeSet\SizeSetController;
 use App\Http\Controllers\superAdmin\SuperAdminController;
 use Illuminate\Support\Facades\Route;
@@ -46,5 +47,6 @@ Route::middleware(['auth', 'suscripcion_activa'])->group(function () {
         Route::get('/equipo', [EquipoController::class, 'index'])->name('equipo.index');
         Route::get('/reportes', [ReportController::class, 'index'])->name('reports.index');
         Route::get('/Empresa', [ConfiguracionController::class, 'index'])->name('configuracion.index');
+        Route::get('/series', [SerieController::class, 'index'])->name('series.index');
     });
 });

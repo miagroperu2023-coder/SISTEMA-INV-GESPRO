@@ -12,6 +12,7 @@ new class extends Component
     public $regimen_tributario;
 
     // NubeFact
+    public $nubefact_ruta = '';
     public $nubefact_token = '';
     public $facturacion_electronica_activa = false;
 
@@ -30,6 +31,7 @@ new class extends Component
         $this->razon_social = $business->razon_social;
         $this->regimen_tributario = $business->regimen_tributario;
 
+        $this->nubefact_ruta = $business->nubefact_ruta ?? '';
         $this->nubefact_token = $business->nubefact_token ?? '';
         $this->facturacion_electronica_activa = (bool) $business->facturacion_electronica_activa;
     }
@@ -59,7 +61,6 @@ new class extends Component
             'tipo_documento' => $this->tipo_documento,
             'numero_documento' => $this->numero_documento,
             'razon_social' => $this->razon_social,
-            // si es sin_ruc, se fuerza a sin_ruc sin importar lo que haya en el select
             'regimen_tributario' => $this->tipo_documento === 'ruc' ? $this->regimen_tributario : 'sin_ruc',
         ]);
 
@@ -76,10 +77,12 @@ new class extends Component
         }
 
         $this->validate([
+            'nubefact_ruta' => 'required|url',
             'nubefact_token' => 'required|string',
         ]);
 
         $business->update([
+            'nubefact_ruta' => $this->nubefact_ruta,
             'nubefact_token' => $this->nubefact_token,
             'facturacion_electronica_activa' => true,
         ]);

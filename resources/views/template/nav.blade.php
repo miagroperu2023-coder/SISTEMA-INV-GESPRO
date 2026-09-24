@@ -1,7 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">
-            <img src="{{ asset('logo.jpeg') }}" alt="" class="img-fluid" style="width: 45px; height: 50px; border-radius: 10%">
+            <img src="{{ asset('logo.jpeg') }}" alt="" class="img-fluid"
+                style="width: 45px; height: 50px; border-radius: 10%">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,6 +81,16 @@
                         <a class="nav-link {{ request()->routeIs('configuracion.index') ? 'active' : '' }}"
                             href="{{ route('configuracion.index') }}">Negocio</a>
                     </li>
+
+                    @php $negocioActivo = auth()->user()->negocioActivo(); @endphp
+
+                    @if ($negocioActivo && $negocioActivo->tipo_documento === 'ruc')
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('series.index') ? 'active' : '' }}"
+                                href="{{ route('series.index') }}">Series</a>
+                        </li>
+                    @endif
+
 
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('sedes.index') ? 'active' : '' }}"
