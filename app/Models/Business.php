@@ -73,8 +73,8 @@ class Business extends Model
         $sede->cashiers()->create(['nombre' => 'Caja 1']);
 
         if ($this->tipo_documento === 'ruc') {
-            VoucherSeries::create(['business_location_id' => $sede->id, 'tipo_comprobante' => 'boleta', 'serie' => 'B001']);
-            VoucherSeries::create(['business_location_id' => $sede->id, 'tipo_comprobante' => 'factura', 'serie' => 'F001']);
+            VoucherSeries::create(['business_location_id' => $sede->id, 'tipo_comprobante' => 'boleta', 'serie' => 'BBB1']);
+            VoucherSeries::create(['business_location_id' => $sede->id, 'tipo_comprobante' => 'factura', 'serie' => 'FFF1']);
         }
 
         return $sede;

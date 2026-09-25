@@ -8,6 +8,16 @@
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0 ps-3">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <h2 class="h4 fw-bold mb-4">Configuración del negocio</h2>
 
     <div class="card mb-3" style="max-width: 600px;">
@@ -49,6 +59,7 @@
                 <div class="mb-3">
                     <label class="form-label">¿Bajo qué régimen tributario estás?</label>
                     <select wire:model="regimen_tributario" class="form-select">
+                        <option value="">-- Seleccione --</option>
                         <option value="nrus">Nuevo RUS (emito boleta, sin IGV desglosado)</option>
                         <option value="general">Régimen General/Especial (boleta y factura, con IGV)</option>
                     </select>
