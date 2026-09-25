@@ -15,10 +15,10 @@ class SalesController extends Controller
     public function index()
     {
         //dd(Date('Y-m-d'));
-        //$voucher = Voucher::with(['businessLocation.business', 'customer', 'items.variant.product', 'items.variant.size'])->find(10);
-        //$service = app(NubeFactService::class);
-        //$resultado = $service->enviar($voucher);
-        //dd($resultado);
+        $voucher = Voucher::with(['businessLocation.business', 'customer', 'items.variant.product', 'items.variant.size'])->find(11);
+        $service = app(NubeFactService::class);
+        $resultado = $service->enviar($voucher);
+        dd($resultado); 
         return view('sale.index');
     }
 
