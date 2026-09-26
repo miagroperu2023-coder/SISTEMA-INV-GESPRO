@@ -7,7 +7,7 @@ use App\Models\Voucher;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class NubeFactService
+class ReniecService
 {
     public function enviar(Voucher $voucher): array
     {
