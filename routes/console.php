@@ -6,5 +6,6 @@ use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
-    Schedule::command('sunat:enviar-pendientes')->everyFiveMinutes()->withoutOverlapping();
 })->purpose('Display an inspiring quote');
+
+Schedule::command('app:enviar-comprobantes-pendientes')->everyFiveMinutes()->withoutOverlapping();
