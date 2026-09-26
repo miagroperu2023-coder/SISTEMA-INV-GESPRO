@@ -13,9 +13,6 @@ use Illuminate\Support\Facades\Log;
 #[Description('Envía a NubeFact las boletas/facturas pendientes de emisión')]
 class EnviarComprobantesPendientes extends Command
 {
-    /**
-     * Execute the console command.
-     */
     public function handle(NubeFactService $service)
     {
         Log::info('sunat:enviar-pendientes → inicio de ejecución');
@@ -40,13 +37,13 @@ class EnviarComprobantesPendientes extends Command
         Log::info('sunat:enviar-pendientes → procesando ' . $pendientes->count() . ' comprobante(s)');
 
         foreach ($pendientes as $voucher) {
-            $business = $voucher->businessLocation->business;
-
-            if (!$business->puedeEmitirElectronico()) {
-                continue;
-            }
-
             try {
+                $business = $voucher->businessLocation?->business;
+
+                if (!$business || !$business->puedeEmitirElectronico()) {
+                    continue;
+                }
+
                 $resultado = $service->enviar($voucher);
                 $data = $resultado['respuesta'];
 
