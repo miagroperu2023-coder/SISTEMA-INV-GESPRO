@@ -3,9 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Models\Voucher;
-use App\Services\NubeFactService;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
+use App\Services\NubeFactService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
