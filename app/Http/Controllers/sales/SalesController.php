@@ -5,7 +5,6 @@ namespace App\Http\Controllers\sales;
 use App\Http\Controllers\Controller;
 use App\Models\Voucher;
 use App\Helpers\NumeroALetras;
-use App\Services\NubeFactService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 
