@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\cashier\CashierShiftController;
 use App\Http\Controllers\category\CategoryController;
 use App\Http\Controllers\client\ClientController;
+use App\Http\Controllers\comprobante\ComprobanteController;
 use App\Http\Controllers\configuracion\ConfiguracionController;
 use App\Http\Controllers\equipo\EquipoController;
 use App\Http\Controllers\product\ProductController;
@@ -47,6 +48,7 @@ Route::middleware(['auth', 'suscripcion_activa'])->group(function () {
         Route::get('/equipo', [EquipoController::class, 'index'])->name('equipo.index');
         Route::get('/reportes', [ReportController::class, 'index'])->name('reports.index');
         Route::get('/Empresa', [ConfiguracionController::class, 'index'])->name('configuracion.index');
+        Route::get('/comprobantes', [ComprobanteController::class, 'index'])->name('comprobantes.index');
         Route::get('/series', [SerieController::class, 'index'])->name('series.index');
     });
 });

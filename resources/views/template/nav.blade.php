@@ -89,6 +89,11 @@
                             <a class="nav-link {{ request()->routeIs('series.index') ? 'active' : '' }}"
                                 href="{{ route('series.index') }}">Series</a>
                         </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('comprobantes.index') ? 'active' : '' }}"
+                                href="{{ route('comprobantes.index') }}">Comprobantes</a>
+                        </li>
                     @endif
 
 

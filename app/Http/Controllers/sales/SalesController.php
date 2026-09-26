@@ -5,6 +5,7 @@ namespace App\Http\Controllers\sales;
 use App\Http\Controllers\Controller;
 use App\Models\Voucher;
 use App\Helpers\NumeroALetras;
+use App\Services\NubeFactService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 
@@ -17,7 +18,7 @@ class SalesController extends Controller
         /*$voucher = Voucher::with(['businessLocation.business', 'customer', 'items.variant.product', 'items.variant.size'])->find(11);
         $service = app(NubeFactService::class);
         $resultado = $service->enviar($voucher);
-        dd($resultado); */ 
+        dd($resultado); */
         return view('sale.index');
     }
 
