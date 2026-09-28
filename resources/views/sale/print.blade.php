@@ -233,17 +233,16 @@
 
     {{-- Texto legal y QR solo para boleta/factura (comprobante fiscal real) --}}
     @if ($voucher->tipo_comprobante !== 'ticket')
-        <div class="footer-legal">
-            Representación impresa de {{ $voucher->tipo_comprobante === 'factura' ? 'FACTURA' : 'BOLETA' }}
-            ELECTRÓNICA. Puede verificarla en el portal de SUNAT.
-        </div>
-
-        {{--
-            El QR real se genera cuando conectes SUNAT (NubeFact u otro PSE
-            te devuelve el string del QR ya codificado). Por ahora, mientras
-            no esté conectado, se omite.
-        --}}
-        {{-- <img src="{{ $voucher->qr_path }}" style="width:90px; display:block; margin:8px auto;"> --}}
+        @if ($voucher->estado === 'aceptado')
+            <div class="footer-legal">
+                Representación impresa de {{ $voucher->tipo_comprobante === 'factura' ? 'FACTURA' : 'BOLETA' }}
+                ELECTRÓNICA. Puede verificarla en el portal de SUNAT.
+            </div>
+        @else
+            <div class="footer-legal">
+                Comprobante pendiente de validación ante SUNAT.
+            </div>
+        @endif
     @endif
 
 </body>

@@ -216,6 +216,12 @@ new class extends Component
             return;
         }
 
+        // aunque el régimen lo permita, si NubeFact no está conectado no se puede emitir boleta/factura real
+        if ($this->tipo_comprobante !== 'ticket' && !$business->puedeEmitirElectronico()) {
+            session()->flash('error', 'Este negocio aún no tiene activa la facturación electrónica. Conéctala en Negocio → Facturación electrónica, o usa Ticket.');
+            return;
+        }
+
         $discriminaIgv = $business->discriminaIgv();
 
         $itemsCalculados = collect($this->items)->map(function ($item) use ($discriminaIgv) {
@@ -295,8 +301,16 @@ new class extends Component
     {
         $business = $this->negocioActivo();
 
+        $comprobantesPermitidos = $business?->comprobantesPermitidos() ?? ['ticket'];
+
+        // si el negocio no tiene la facturación electrónica realmente activa,
+        // solo puede vender con ticket, sin importar su régimen tributario
+        if (!$business?->puedeEmitirElectronico()) {
+            $comprobantesPermitidos = ['ticket'];
+        }
+
         return $this->view([
-            'comprobantesPermitidos' => $business?->comprobantesPermitidos() ?? ['ticket'],
+            'comprobantesPermitidos' => $comprobantesPermitidos,
             'discriminaIgv' => $business?->discriminaIgv() ?? false,
         ]);
     }
