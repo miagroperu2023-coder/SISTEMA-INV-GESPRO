@@ -55,6 +55,15 @@
     @else
         <div class="card">
             <div class="card-body">
+
+                @if ($turnoAbierto)
+                    <div class="alert alert-success d-flex justify-content-between align-items-center">
+                        <span>Caja abierta - puedes vender.</span>
+                        <a href="{{ route('sales.index') }}" class="btn btn-sm btn-success">Vender ahora</a>
+                    </div>
+                @endif
+
+
                 <p class="mb-1"><strong>Abierta desde:</strong> {{ $turnoAbierto->abierta_at->format('d/m/Y H:i') }}
                 </p>
                 <p class="mb-3"><strong>Apertura:</strong> S/ {{ number_format($turnoAbierto->monto_apertura, 2) }}

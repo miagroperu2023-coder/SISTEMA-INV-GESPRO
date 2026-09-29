@@ -8,6 +8,7 @@ use App\Http\Controllers\client\ClientController;
 use App\Http\Controllers\comprobante\ComprobanteController;
 use App\Http\Controllers\configuracion\ConfiguracionController;
 use App\Http\Controllers\equipo\EquipoController;
+use App\Http\Controllers\import\ImportExcelController;
 use App\Http\Controllers\product\ProductController;
 use App\Http\Controllers\report\ReportController;
 use App\Http\Controllers\sales\SalesController;
@@ -42,6 +43,7 @@ Route::middleware(['auth', 'suscripcion_activa'])->group(function () {
 
     Route::middleware('dueno_admin')->group(function () {
         Route::get('/productos', [ProductController::class, 'index'])->name('products.index');
+        Route::get('/importar', [ImportExcelController::class, 'index'])->name('importar.index');
         Route::get('/categorias', [CategoryController::class, 'index'])->name('categories.index');
         Route::get('/tallas', [SizeSetController::class, 'index'])->name('sizesets.index');
         Route::get('/sedes', [SedeController::class, 'index'])->name('sedes.index');

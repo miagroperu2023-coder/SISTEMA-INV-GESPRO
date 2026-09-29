@@ -9,3 +9,6 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('app:enviar-comprobantes-pendientes')->everyFiveMinutes()->withoutOverlapping();
+
+// procesa importaciones de Excel en segundo plano
+Schedule::command('queue:work --stop-when-empty --tries=1')->everyMinute()->withoutOverlapping();

@@ -23,10 +23,13 @@
 
         <div class="position-relative mb-3">
             <input type="text" wire:model.live.debounce.300ms="busqueda" class="form-control"
-                placeholder="Busca por nombre o color..." autofocus>
+                placeholder="Busca por nombre o color..." autofocus
+                onkeydown="if(event.key === 'Enter'){ event.preventDefault(); return false; }">
+
 
             @if (count($resultados) > 0)
-                <div class="list-group position-absolute w-100 shadow" style="z-index: 10;">
+                <div class="list-group position-absolute w-100 shadow"
+                    style="z-index: 10; max-height: 320px; overflow-y: auto;">
                     @foreach ($resultados as $variant)
                         <button type="button" wire:click="agregarItem({{ $variant->id }})"
                             class="list-group-item list-group-item-action d-flex justify-content-between">

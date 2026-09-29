@@ -28,7 +28,7 @@ class LoginController extends Controller
                 session(['sede_activa_id' => $primera->id]);
             }
 
-            return redirect()->intended(route('sales.index'));
+            return redirect()->intended(route('caja.index'));
         }
 
         return back()->withErrors([

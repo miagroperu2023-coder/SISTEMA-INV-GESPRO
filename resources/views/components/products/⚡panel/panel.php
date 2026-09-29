@@ -130,15 +130,27 @@ new class extends Component
 
     public function render()
     {
+        $busqueda = trim($this->buscarProducto);
+
+        $query = Product::with([
+            'category',
+            'variants' => fn($q) => $q->orderBy('color')->orderBy('size_id'),
+            'variants.size',
+        ]);
+
+        if ($busqueda) {
+            $palabras = preg_split('/\s+/', $busqueda);
+
+            foreach ($palabras as $palabra) {
+                $query->where(function ($q) use ($palabra) {
+                    $q->where('nombre', 'like', "%{$palabra}%")
+                        ->orWhereHas('variants', fn($qq) => $qq->where('color', 'like', "%{$palabra}%"));
+                });
+            }
+        }
+
         return $this->view([
-            'productos' => Product::with([
-                'category',
-                'variants' => fn($q) => $q->orderBy('color')->orderBy('size_id'),
-                'variants.size',
-            ])
-                ->when($this->buscarProducto, fn($q) => $q->where('nombre', 'like', '%' . $this->buscarProducto . '%'))
-                ->orderBy('nombre')
-                ->get(),
+            'productos' => $query->orderBy('nombre')->get(),
             'categorias' => Category::where('estado', 'ACTIVO')->get(),
             'todasLasTallas' => BusinessLocation::find(session('sede_activa_id'))->tallasActivas(),
         ]);

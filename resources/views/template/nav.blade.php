@@ -9,7 +9,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav flex-wrap">
 
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('sales.index') ? 'active' : '' }}"
@@ -26,85 +26,50 @@
                         href="{{ route('clients.index') }}">Clientes</a>
                 </li>
 
-
                 @if (auth()->user()->esDuenoOAdmin())
-                    {{--
+
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Gestión Productos
+                        <a class="nav-link dropdown-toggle {{ request()->routeIs(['products.index', 'importar.index', 'categories.index', 'sizesets.index']) ? 'active' : '' }}"
+                            href="#" id="dropdownCatalogo" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Catálogo
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <ul class="dropdown-menu" aria-labelledby="dropdownCatalogo">
                             <li><a class="dropdown-item {{ request()->routeIs('products.index') ? 'active' : '' }}"
                                     href="{{ route('products.index') }}">Productos</a></li>
+                            <li><a class="dropdown-item {{ request()->routeIs('importar.index') ? 'active' : '' }}"
+                                    href="{{ route('importar.index') }}">Importar</a></li>
                             <li><a class="dropdown-item {{ request()->routeIs('categories.index') ? 'active' : '' }}"
-                                    href="{{ route('categories.index') }}">Categorias</a></li>
+                                    href="{{ route('categories.index') }}">Categorías</a></li>
                             <li><a class="dropdown-item {{ request()->routeIs('sizesets.index') ? 'active' : '' }}"
                                     href="{{ route('sizesets.index') }}">Tallas</a></li>
                         </ul>
                     </li>
-                    --}}
 
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('products.index') ? 'active' : '' }}"
-                            href="{{ route('products.index') }}">Productos</a>
-                    </li>
+                    @php $negocioActivo = auth()->user()->negocioActivo(); @endphp
 
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('categories.index') ? 'active' : '' }}"
-                            href="{{ route('categories.index') }}">Categorias</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('sizesets.index') ? 'active' : '' }}"
-                            href="{{ route('sizesets.index') }}">Tallas</a>
-                    </li>
-
-                    {{--
-                    <li class="nav-item dropdown active">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Gestión Negocio
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {{ request()->routeIs(['configuracion.index', 'series.index', 'comprobantes.index', 'sedes.index', 'equipo.index']) ? 'active' : '' }}"
+                            href="#" id="dropdownNegocio" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Negocio
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <ul class="dropdown-menu" aria-labelledby="dropdownNegocio">
                             <li><a class="dropdown-item {{ request()->routeIs('configuracion.index') ? 'active' : '' }}"
-                                    href="{{ route('configuracion.index') }}">Negocio</a></li>
+                                    href="{{ route('configuracion.index') }}">Configuración</a></li>
+
+                            @if ($negocioActivo && $negocioActivo->tipo_documento === 'ruc')
+                                <li><a class="dropdown-item {{ request()->routeIs('series.index') ? 'active' : '' }}"
+                                        href="{{ route('series.index') }}">Series</a></li>
+                                <li><a class="dropdown-item {{ request()->routeIs('comprobantes.index') ? 'active' : '' }}"
+                                        href="{{ route('comprobantes.index') }}">Comprobantes</a></li>
+                            @endif
+
                             <li><a class="dropdown-item {{ request()->routeIs('sedes.index') ? 'active' : '' }}"
                                     href="{{ route('sedes.index') }}">Sedes</a></li>
                             <li><a class="dropdown-item {{ request()->routeIs('equipo.index') ? 'active' : '' }}"
                                     href="{{ route('equipo.index') }}">Equipo</a></li>
                         </ul>
-                    </li>
-                    --}}
-
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('configuracion.index') ? 'active' : '' }}"
-                            href="{{ route('configuracion.index') }}">Negocio</a>
-                    </li>
-
-                    @php $negocioActivo = auth()->user()->negocioActivo(); @endphp
-
-                    @if ($negocioActivo && $negocioActivo->tipo_documento === 'ruc')
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('series.index') ? 'active' : '' }}"
-                                href="{{ route('series.index') }}">Series</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('comprobantes.index') ? 'active' : '' }}"
-                                href="{{ route('comprobantes.index') }}">Comprobantes</a>
-                        </li>
-                    @endif
-
-
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('sedes.index') ? 'active' : '' }}"
-                            href="{{ route('sedes.index') }}">Sedes</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('equipo.index') ? 'active' : '' }}"
-                            href="{{ route('equipo.index') }}">Equipo</a>
                     </li>
 
                     <li class="nav-item">
@@ -114,7 +79,6 @@
 
                     @livewire('sede.sede-selector')
                 @endif
-
 
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -134,18 +98,6 @@
                         </li>
                     </ul>
                 </li>
-                {{--
-                <li class="nav-item">
-                    <a class="nav-link">Hola: {{ auth()->user()->name }} </a>
-                </li>
-
-                <li class="nav-item">
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button class="btn btn-danger">Cerrar Sistema</button>
-                    </form>
-                </li>
-                --}}
 
             </ul>
         </div>

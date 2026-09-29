@@ -9,6 +9,10 @@
                     Iniciar sesión
                 </h2>
 
+                <p class="text-muted small text-center mb-4">
+                    Hecho para emprendedores como tú: vende, controla tu inventario y factura cuando lo necesites.
+                </p>
+
                 <div class="text-center mx-auto mb-3">
                     <img src="{{ asset('logo.jpeg') }}" alt="{{ asset('logo.jpeg') }}" class="img-fluid"
                         style="width: 145px;height: 145px;border-radius: 10%">

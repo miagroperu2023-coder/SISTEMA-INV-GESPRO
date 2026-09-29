@@ -27,15 +27,29 @@ new class extends Component
 
     public function updatedBusqueda()
     {
-        if (strlen($this->busqueda) < 2) {
+        $texto = trim($this->busqueda);
+
+        if (strlen($texto) < 2) {
             $this->resultados = [];
             return;
         }
 
-        $this->resultados = ProductVariant::with('product', 'size')
-            ->whereHas('product', fn($q) => $q->where('nombre', 'like', '%' . $this->busqueda . '%'))
-            ->orWhere('color', 'like', '%' . $this->busqueda . '%')
-            ->limit(8)->get();
+        // separa lo que escribió en palabras: "petit azul 30" -> ["petit", "azul", "30"]
+        $palabras = preg_split('/\s+/', $texto);
+
+        $query = ProductVariant::with('product', 'size');
+
+        // cada palabra debe coincidir con AL MENOS UNA de las 3 columnas (nombre, color o talla),
+        // pero TODAS las palabras deben cumplirse (por eso el where() envolvente, no orWhere suelto)
+        foreach ($palabras as $palabra) {
+            $query->where(function ($q) use ($palabra) {
+                $q->whereHas('product', fn($qq) => $qq->where('nombre', 'like', "%{$palabra}%"))
+                    ->orWhere('color', 'like', "%{$palabra}%")
+                    ->orWhereHas('size', fn($qq) => $qq->where('valor', 'like', "%{$palabra}%"));
+            });
+        }
+
+        $this->resultados = $query->limit(50)->get();
     }
 
     public function agregarItem($variantId)
