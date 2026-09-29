@@ -9,7 +9,7 @@
                 <p class="text-muted mb-4">Regístrate para empezar a usar el sistema</p>
 
                 <p class="text-muted small text-center mb-4">
-                    Hecho para emprendedores como tú: vende, controla tu inventario y factura cuando lo necesites.
+                    <strong>GesPro</strong>. Del cuaderno al control inteligente de tu negocio.
                 </p>
 
                 <div class="text-center mx-auto mb-3">
