@@ -131,26 +131,48 @@ new class extends Component
     public function render()
     {
         $busqueda = trim($this->buscarProducto);
+        $palabras = $busqueda ? preg_split('/\s+/', $busqueda) : [];
 
         $query = Product::with([
             'category',
-            'variants' => fn($q) => $q->orderBy('color')->orderBy('size_id'),
+            'variants' => function ($q) use ($palabras) {
+                $q->orderBy('color')->orderBy('size_id');
+
+                // cada palabra debe coincidir con el nombre del producto, el color
+                // o la talla de ESA misma variante — así solo quedan las filas exactas
+                foreach ($palabras as $palabra) {
+                    $q->where(function ($qq) use ($palabra) {
+                        $qq->where('color', 'like', "%{$palabra}%")
+                            ->orWhereHas('size', fn($s) => $s->where('valor', 'like', "%{$palabra}%"))
+                            ->orWhereHas('product', fn($p) => $p->where('nombre', 'like', "%{$palabra}%"));
+                    });
+                }
+            },
             'variants.size',
         ]);
 
         if ($busqueda) {
-            $palabras = preg_split('/\s+/', $busqueda);
-
+            // filtra qué productos aparecen: al menos una palabra debe calzar en nombre o en alguna variante
             foreach ($palabras as $palabra) {
                 $query->where(function ($q) use ($palabra) {
                     $q->where('nombre', 'like', "%{$palabra}%")
-                        ->orWhereHas('variants', fn($qq) => $qq->where('color', 'like', "%{$palabra}%"));
+                        ->orWhereHas('variants', function ($qq) use ($palabra) {
+                            $qq->where('color', 'like', "%{$palabra}%")
+                                ->orWhereHas('size', fn($s) => $s->where('valor', 'like', "%{$palabra}%"));
+                        });
                 });
             }
         }
 
+        $productos = $query->orderBy('nombre')->get();
+
+        // si hay búsqueda activa, oculta productos cuyas variantes quedaron todas filtradas (ninguna calzó)
+        if ($busqueda) {
+            $productos = $productos->filter(fn($p) => $p->variants->isNotEmpty());
+        }
+
         return $this->view([
-            'productos' => $query->orderBy('nombre')->get(),
+            'productos' => $productos,
             'categorias' => Category::where('estado', 'ACTIVO')->get(),
             'todasLasTallas' => BusinessLocation::find(session('sede_activa_id'))->tallasActivas(),
         ]);
