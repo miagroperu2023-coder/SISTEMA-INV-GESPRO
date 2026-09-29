@@ -10,6 +10,8 @@
 
                 <p class="text-muted small text-center mb-4">
                     <strong>GesPro</strong>. Del cuaderno al control inteligente de tu negocio.
+                    <br>
+                    <strong> Inventario · Ventas · Reportes · Facturación</strong>
                 </p>
 
                 <div class="text-center mx-auto mb-3">
