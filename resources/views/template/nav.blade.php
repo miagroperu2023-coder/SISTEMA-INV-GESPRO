@@ -81,12 +81,17 @@
                 @endif
 
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle {{ request()->routeIs(['perfil.index']) ? 'active' : '' }}"
+                        href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
                         Cerrar Sistema
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="#">Hola: {{ auth()->user()->name }} </a></li>
+                        <li>
+                            <a class="dropdown-item {{ request()->routeIs('perfil.index') ? 'active' : '' }}"
+                                href="{{ route('perfil.index') }}">Perfil</a>
+                        </li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>

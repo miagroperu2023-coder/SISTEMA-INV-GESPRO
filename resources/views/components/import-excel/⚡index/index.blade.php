@@ -6,14 +6,33 @@
     @endif
 
     @if ($paso === 'subir')
-        <div class="card mb-3" style="max-width: 600px;">
+        <div class="card mb-3" style="max-width: 700px;">
             <div class="card-body">
-                <p class="small text-muted">
+                <p class="small text-muted mb-3">
                     Descarga la <a href="{{ asset('plantillas/plantilla_importar_productos.xlsx') }}">plantilla de
                         ejemplo</a>,
                     llénala y súbela aquí.
                 </p>
-                <input type="file" wire:model="archivo" class="form-control form-control-sm mb-2" accept=".xlsx,.xls">
+
+                <div class="alert alert-light border small mb-3">
+                    <p class="fw-bold mb-2">📋 Cómo llenar la plantilla correctamente:</p>
+                    <ul class="mb-2 ps-3">
+                        <li>Cada <strong>fila</strong> es una combinación de color + talla (una variante).</li>
+                        <li>Si tu prenda tiene varios colores o tallas, <strong>repite el nombre del producto</strong>
+                            exactamente igual en varias filas — una fila por cada variante.</li>
+                        <li>La <strong>Talla</strong> debe ser una que ya tengas activada en el sistema
+                            (revísalo en el menú "Tallas" antes de importar).</li>
+                        <li>Los precios y el stock van solo en números, sin el símbolo "S/".</li>
+                    </ul>
+                    <p class="mb-0">
+                        <strong>Ejemplo:</strong> si tienes un "Pantalón Palazo" en tallas S, M y L, escribes
+                        "Pantalón Palazo" en 3 filas seguidas, cambiando solo la columna Talla en cada una.
+                        El sistema las junta automáticamente como las 3 variantes de un mismo producto.
+                    </p>
+                </div>
+
+                <input type="file" wire:model="archivo" class="form-control form-control-sm mb-2"
+                    accept=".xlsx,.xls">
                 @error('archivo')
                     <div class="text-danger small mb-2">{{ $message }}</div>
                 @enderror

@@ -30,9 +30,10 @@ new class extends Component
         $productosExistentes = Product::where('business_location_id', $sedeId)
             ->with('variants')
             ->get()
-            ->keyBy(fn($p) => mb_strtolower($p->nombre));
+            ->keyBy(fn($p) => mb_strtolower(trim($p->nombre)));
 
         $vistasEnEsteArchivo = [];
+        $nombresCanonicos = []; // guarda la "forma oficial" de cada nombre, sin importar mayúsc/minúsc
         $analizadas = [];
 
         foreach ($filas->skip(1) as $index => $fila) {
@@ -48,6 +49,20 @@ new class extends Component
 
             if (empty($nombreProducto) && empty($categoriaNombre) && empty($color) && empty($tallaValor)) {
                 continue;
+            }
+
+            // normaliza el nombre para que "Patalon", "patalon" y "PATALON" sean el MISMO producto
+            $claveNombre = mb_strtolower($nombreProducto);
+
+            if ($productosExistentes->has($claveNombre)) {
+                // ya existe en la BD: se usa el nombre TAL COMO YA ESTÁ GUARDADO, para no crear un duplicado
+                $nombreProducto = $productosExistentes->get($claveNombre)->nombre;
+            } elseif (isset($nombresCanonicos[$claveNombre])) {
+                // ya apareció antes en este mismo Excel: se usa la forma con la que apareció la primera vez
+                $nombreProducto = $nombresCanonicos[$claveNombre];
+            } else {
+                // primera vez que aparece: esta escritura se vuelve la "oficial" de aquí en adelante
+                $nombresCanonicos[$claveNombre] = $nombreProducto;
             }
 
             $fila_data = [
@@ -88,7 +103,8 @@ new class extends Component
             }
             $fila_data['size_id'] = $size->id;
 
-            $clave = mb_strtolower($nombreProducto . '|' . $color . '|' . $tallaValor);
+            // la clave de duplicado también usa color/talla sin importar mayúsc/minúsc
+            $clave = $claveNombre . '|' . mb_strtolower($color) . '|' . mb_strtolower($tallaValor);
             if (isset($vistasEnEsteArchivo[$clave])) {
                 $fila_data['estado'] = 'duplicado_archivo';
                 $fila_data['mensaje'] = "Repetida en la fila {$vistasEnEsteArchivo[$clave]}.";
@@ -97,10 +113,10 @@ new class extends Component
             }
             $vistasEnEsteArchivo[$clave] = $numeroFila;
 
-            $productoExistente = $productosExistentes->get(mb_strtolower($nombreProducto));
+            $productoExistente = $productosExistentes->get($claveNombre);
             if ($productoExistente) {
                 $existeVariante = $productoExistente->variants->contains(
-                    fn($v) => $v->size_id === $size->id && mb_strtolower($v->color) === mb_strtolower($color)
+                    fn($v) => $v->size_id === $size->id && mb_strtolower(trim($v->color)) === mb_strtolower($color)
                 );
                 if ($existeVariante) {
                     $fila_data['estado'] = 'ya_existe';

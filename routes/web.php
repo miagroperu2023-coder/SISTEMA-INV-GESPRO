@@ -9,6 +9,7 @@ use App\Http\Controllers\comprobante\ComprobanteController;
 use App\Http\Controllers\configuracion\ConfiguracionController;
 use App\Http\Controllers\equipo\EquipoController;
 use App\Http\Controllers\import\ImportExcelController;
+use App\Http\Controllers\perfil\PerfilController;
 use App\Http\Controllers\product\ProductController;
 use App\Http\Controllers\report\ReportController;
 use App\Http\Controllers\sales\SalesController;
@@ -52,5 +53,6 @@ Route::middleware(['auth', 'suscripcion_activa'])->group(function () {
         Route::get('/Empresa', [ConfiguracionController::class, 'index'])->name('configuracion.index');
         Route::get('/comprobantes', [ComprobanteController::class, 'index'])->name('comprobantes.index');
         Route::get('/series', [SerieController::class, 'index'])->name('series.index');
+        Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
     });
 });

@@ -13,10 +13,14 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         //
+        $middleware->web(append: [
+            \App\Http\Middleware\VerificarAccesoSede::class,
+        ]);
+
         $middleware->alias([
             'dueno_admin' => \App\Http\Middleware\SoloDuenoOAdmin::class,
             'suscripcion_activa' => \App\Http\Middleware\VerificarSuscripcionActiva::class,
-            'super_admin' => \App\Http\Middleware\SoloSuperAdmin::class
+            'super_admin' => \App\Http\Middleware\SoloSuperAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

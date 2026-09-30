@@ -40,21 +40,24 @@ class User extends Authenticatable
 
     public function sedesAsignadas()
     {
-        return $this->belongsToMany(BusinessLocation::class, 'business_location_user')->withTimestamps();
+        return $this->belongsToMany(BusinessLocation::class, 'business_location_user')
+            ->withPivot('estado')
+            ->withTimestamps();
     }
 
     public function sedesAccesibles()
     {
-        // sedes donde es dueño o admin del negocio completo → ve TODAS las sedes de ese negocio
         $sedesComoDueno = $this->businesses()
             ->wherePivotIn('rol', ['dueño', 'admin'])
+            ->wherePivot('estado', 'ACTIVO') // el negocio-dueño debe estar activo
             ->with('locations')
             ->get()
             ->pluck('locations')
             ->flatten();
 
-        // sedes donde es vendedor asignado directamente → ve SOLO esa sede
-        $sedesComoVendedor = $this->belongsToMany(BusinessLocation::class, 'business_location_user')->get();
+        $sedesComoVendedor = $this->belongsToMany(BusinessLocation::class, 'business_location_user')
+            ->wherePivot('estado', 'ACTIVO') // solo sedes donde sigue activo como vendedor
+            ->get();
 
         return $sedesComoDueno->merge($sedesComoVendedor)->unique('id');
     }
@@ -70,17 +73,16 @@ class User extends Authenticatable
     {
         $sedeId = session('sede_activa_id');
 
-        // si es dueño/admin del negocio dueño de esa sede
         $business = $this->businesses()
+            ->wherePivot('estado', 'ACTIVO')
             ->whereHas('locations', fn($q) => $q->where('id', $sedeId))
             ->first();
 
         if ($business) {
-            return $business->pivot->rol; // 'dueño' o 'admin'
+            return $business->pivot->rol;
         }
 
-        // si es vendedor asignado directo a esa sede
-        if ($this->sedesAsignadas()->where('business_location_id', $sedeId)->exists()) {
+        if ($this->sedesAsignadas()->wherePivot('estado', 'ACTIVO')->where('business_location_id', $sedeId)->exists()) {
             return 'vendedor';
         }
 

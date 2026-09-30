@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('business_location_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->enum('estado', ['ACTIVO', 'INACTIVO'])->default('ACTIVO');
             $table->timestamps();
 
             $table->unique(['business_location_id', 'user_id'], 'sede_usuario_unique');

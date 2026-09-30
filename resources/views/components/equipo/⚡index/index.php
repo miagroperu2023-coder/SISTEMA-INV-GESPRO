@@ -4,6 +4,7 @@ use Livewire\Component;
 use App\Models\Business;
 use App\Models\BusinessLocation;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
@@ -14,6 +15,9 @@ new class extends Component
     public $email;
     public $password;
     public $business_location_id;
+
+    public $editandoId = null;
+    public $nuevaPassword = '';
 
     protected function negocioDelDueno()
     {
@@ -37,7 +41,6 @@ new class extends Component
 
         $business = $this->negocioDelDueno();
 
-        // valida que la sede elegida realmente pertenezca al negocio de este dueño
         if (!$business->locations()->where('id', $this->business_location_id)->exists()) {
             session()->flash('error', 'Esa sede no pertenece a tu negocio.');
             return;
@@ -49,23 +52,58 @@ new class extends Component
             'password' => Hash::make($this->password),
         ]);
 
-        // lo asigna SOLO a esa sede (no entra a business_user, así no ve el resto)
         $vendedor->belongsToMany(BusinessLocation::class, 'business_location_user')
-            ->attach($this->business_location_id);
+            ->attach($this->business_location_id, ['estado' => 'ACTIVO']);
 
         $this->mostrarForm = false;
-        session()->flash('ok', "Cuenta creada para {$vendedor->name}. Comparte estas credenciales: {$vendedor->email} / (la contraseña que ingresaste)");
+        session()->flash('ok', "Cuenta creada para {$vendedor->name}. Comparte estas credenciales: {$vendedor->email}");
+    }
+
+    public function abrirEditarPassword($userId)
+    {
+        $this->editandoId = $this->editandoId === $userId ? null : $userId;
+        $this->nuevaPassword = '';
+    }
+
+    public function actualizarPassword($userId)
+    {
+        $this->validate(['nuevaPassword' => ['required', Password::min(6)]]);
+
+        User::where('id', $userId)->update([
+            'password' => Hash::make($this->nuevaPassword),
+        ]);
+
+        $this->editandoId = null;
+        session()->flash('ok', 'Contraseña actualizada correctamente.');
+    }
+
+    public function toggleEstado($userId, $sedeId)
+    {
+        $pivot = DB::table('business_location_user')
+            ->where('business_location_id', $sedeId)
+            ->where('user_id', $userId)
+            ->first();
+
+        $nuevoEstado = $pivot->estado === 'ACTIVO' ? 'INACTIVO' : 'ACTIVO';
+
+        DB::table('business_location_user')
+            ->where('business_location_id', $sedeId)
+            ->where('user_id', $userId)
+            ->update(['estado' => $nuevoEstado]);
+
+        session()->flash('ok', $nuevoEstado === 'ACTIVO' ? 'Vendedor activado.' : 'Vendedor desactivado. Ya no podrá vender en esta sede.');
     }
 
     public function render()
     {
         $business = $this->negocioDelDueno();
-
         $sedes = $business?->locations ?? collect();
 
         $vendedores = User::whereHas('sedesAsignadas', function ($q) use ($sedes) {
             $q->whereIn('business_location_id', $sedes->pluck('id'));
-        })->with('sedesAsignadas')->get();
+        })
+            ->with(['sedesAsignadas' => fn($q) => $q->whereIn('business_location_id', $sedes->pluck('id'))])
+            ->get();
 
         return $this->view([
             'sedes' => $sedes,
