@@ -61,7 +61,8 @@
     @endif
 
 
-    <div class="table-responsive">
+    {{-- Vista de TABLA — solo visible en pantallas medianas hacia arriba --}}
+    <div class="table-responsive d-none d-md-block">
         <table class="table table-sm align-middle">
             <thead>
                 <tr>
@@ -75,7 +76,7 @@
             <tbody>
                 @forelse ($vendedores as $vendedor)
                     @php $sede = $vendedor->sedesAsignadas->first(); @endphp
-                    <tr wire:key="vendedor-{{ $vendedor->id }}">
+                    <tr wire:key="vendedor-desktop-{{ $vendedor->id }}">
                         <td>{{ $vendedor->name }}</td>
                         <td>{{ $vendedor->email }}</td>
                         <td>{{ $sede->nombre ?? '-' }}</td>
@@ -88,23 +89,26 @@
                             @endif
                         </td>
                         <td>
-                            <button wire:click="abrirEditarPassword({{ $vendedor->id }})"
-                                class="btn btn-sm btn-outline-primary">
-                                Cambiar contraseña
-                            </button>
-                            @if ($sede)
-                                <button wire:click="toggleEstado({{ $vendedor->id }}, {{ $sede->id }})"
-                                    class="btn btn-sm {{ $sede->pivot->estado === 'ACTIVO' ? 'btn-outline-danger' : 'btn-outline-success' }}">
-                                    {{ $sede->pivot->estado === 'ACTIVO' ? 'Desactivar' : 'Activar' }}
+                            <div class="d-flex gap-1">
+                                <button wire:click="abrirEditarPassword({{ $vendedor->id }})"
+                                    class="btn btn-sm btn-outline-primary">
+                                    Cambiar contraseña
                                 </button>
-                            @endif
+                                @if ($sede)
+                                    <button wire:click="toggleEstado({{ $vendedor->id }}, {{ $sede->id }})"
+                                        class="btn btn-sm {{ $sede->pivot->estado === 'ACTIVO' ? 'btn-outline-danger' : 'btn-outline-success' }}">
+                                        {{ $sede->pivot->estado === 'ACTIVO' ? 'Desactivar' : 'Activar' }}
+                                    </button>
+                                @endif
+                            </div>
 
                             @if ($editandoId === $vendedor->id)
                                 <div class="mt-2 d-flex gap-2">
                                     <input type="text" wire:model="nuevaPassword"
-                                        class="form-control form-control-sm" placeholder="Nueva contraseña">
+                                        class="form-control form-control-sm" placeholder="Nueva contraseña"
+                                        style="min-width: 160px;">
                                     <button wire:click="actualizarPassword({{ $vendedor->id }})"
-                                        class="btn btn-sm btn-primary">Guardar</button>
+                                        class="btn btn-sm btn-primary text-nowrap">Guardar</button>
                                 </div>
                                 @error('nuevaPassword')
                                     <div class="text-danger small">{{ $message }}</div>
@@ -119,6 +123,55 @@
                 @endforelse
             </tbody>
         </table>
+    </div>
+
+    {{-- Vista de TARJETAS — solo visible en celular --}}
+    <div class="d-md-none">
+        @forelse ($vendedores as $vendedor)
+            @php $sede = $vendedor->sedesAsignadas->first(); @endphp
+            <div class="card mb-2" wire:key="vendedor-mobile-{{ $vendedor->id }}">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <strong>{{ $vendedor->name }}</strong>
+                        @if ($sede)
+                            <span
+                                class="badge {{ $sede->pivot->estado === 'ACTIVO' ? 'bg-success' : 'bg-secondary' }}">
+                                {{ $sede->pivot->estado }}
+                            </span>
+                        @endif
+                    </div>
+                    <p class="small text-muted mb-1">{{ $vendedor->email }}</p>
+                    <p class="small mb-3">Sede: {{ $sede->nombre ?? '-' }}</p>
+
+                    <div class="d-flex flex-column gap-2">
+                        <button wire:click="abrirEditarPassword({{ $vendedor->id }})"
+                            class="btn btn-sm btn-outline-primary w-100">
+                            Cambiar contraseña
+                        </button>
+                        @if ($sede)
+                            <button wire:click="toggleEstado({{ $vendedor->id }}, {{ $sede->id }})"
+                                class="btn btn-sm w-100 {{ $sede->pivot->estado === 'ACTIVO' ? 'btn-outline-danger' : 'btn-outline-success' }}">
+                                {{ $sede->pivot->estado === 'ACTIVO' ? 'Desactivar' : 'Activar' }}
+                            </button>
+                        @endif
+                    </div>
+
+                    @if ($editandoId === $vendedor->id)
+                        <div class="mt-2 d-flex flex-column gap-2">
+                            <input type="text" wire:model="nuevaPassword" class="form-control form-control-sm w-100"
+                                placeholder="Nueva contraseña">
+                            <button wire:click="actualizarPassword({{ $vendedor->id }})"
+                                class="btn btn-sm btn-primary w-100">Guardar</button>
+                        </div>
+                        @error('nuevaPassword')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
+                    @endif
+                </div>
+            </div>
+        @empty
+            <p class="text-center text-muted">Aún no has creado vendedores.</p>
+        @endforelse
     </div>
 
 
