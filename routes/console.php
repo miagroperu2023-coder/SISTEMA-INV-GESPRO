@@ -11,4 +11,4 @@ Artisan::command('inspire', function () {
 Schedule::command('app:enviar-comprobantes-pendientes')->everyFiveMinutes()->withoutOverlapping();
 
 // procesa importaciones de Excel en segundo plano
-Schedule::command('queue:work --stop-when-empty --tries=1')->everyMinute()->withoutOverlapping();
+Schedule::command('queue:work --stop-when-empty --tries=1 --timeout=120')->everyMinute()->withoutOverlapping();

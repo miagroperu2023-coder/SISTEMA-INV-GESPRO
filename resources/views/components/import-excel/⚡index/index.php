@@ -18,6 +18,22 @@ new class extends Component
     public $filasAnalizadas = [];
     public $importActualId = null;
 
+
+    public function mount()
+    {
+        // si ya había una importación en curso o recién completada para esta sede, la retoma en vez de perderla
+        $sedeId = session('sede_activa_id');
+        $importPendiente = ProductImport::where('business_location_id', $sedeId)
+            ->whereIn('estado', ['pendiente', 'procesando'])
+            ->latest()
+            ->first();
+
+        if ($importPendiente) {
+            $this->importActualId = $importPendiente->id;
+            $this->paso = 'procesando';
+        }
+    }
+
     public function analizar()
     {
         $this->validate(['archivo' => 'required|mimes:xlsx,xls|max:5120']);

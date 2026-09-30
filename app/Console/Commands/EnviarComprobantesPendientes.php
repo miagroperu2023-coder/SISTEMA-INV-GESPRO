@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Voucher;
+use App\Services\MyNubeFactService;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use App\Services\NubeFactService;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 #[Description('Envía a NubeFact las boletas/facturas pendientes de emisión')]
 class EnviarComprobantesPendientes extends Command
 {
-    public function handle(NubeFactService $service)
+    public function handle(MyNubeFactService $service)
     {
         Log::info('sunat:enviar-pendientes → inicio de ejecución');
 

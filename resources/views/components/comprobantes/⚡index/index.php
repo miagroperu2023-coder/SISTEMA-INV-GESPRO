@@ -3,6 +3,7 @@
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Voucher;
+use App\Services\MyNubeFactService;
 use App\Services\NubeFactService;
 
 new class extends Component
@@ -30,7 +31,7 @@ new class extends Component
             return;
         }
 
-        $service = app(NubeFactService::class);
+        $service = app(MyNubeFactService::class);
 
         try {
             $resultado = $service->enviar($voucher);
