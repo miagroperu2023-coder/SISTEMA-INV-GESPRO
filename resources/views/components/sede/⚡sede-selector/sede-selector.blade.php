@@ -1,6 +1,7 @@
 <div class="dropdown">
     @if ($sedes->count() > 1)
-        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+        <button class="btn btn-outline-success mt-1 text-white btn-sm dropdown-toggle" type="button"
+            data-bs-toggle="dropdown">
             @php $actual = $sedes->firstWhere('id', $sedeActivaId); @endphp
             {{ $actual->nombre ?? 'Selecciona sede' }}
         </button>
