@@ -21,7 +21,7 @@
                         <li>Si tu prenda tiene varios colores o tallas, <strong>repite el nombre del producto</strong>
                             exactamente igual en varias filas — una fila por cada variante.</li>
                         <li>La <strong>Talla</strong> debe ser una que ya tengas activada en el sistema
-                            (revísalo en el menú "Tallas" antes de importar).</li>
+                            (revísalo en el menú "Catálogo/Tallas" antes de importar).</li>
                         <li>Los precios y el stock van solo en números, sin el símbolo "S/".</li>
                     </ul>
                     <p class="mb-0">
