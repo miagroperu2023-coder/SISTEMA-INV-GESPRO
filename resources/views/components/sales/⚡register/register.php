@@ -34,13 +34,12 @@ new class extends Component
             return;
         }
 
-        // separa lo que escribió en palabras: "petit azul 30" -> ["petit", "azul", "30"]
         $palabras = preg_split('/\s+/', $texto);
+        $sedeId = session('sede_activa_id');
 
-        $query = ProductVariant::with('product', 'size');
+        $query = ProductVariant::with('product', 'size')
+            ->whereHas('product', fn($q) => $q->where('business_location_id', $sedeId));
 
-        // cada palabra debe coincidir con AL MENOS UNA de las 3 columnas (nombre, color o talla),
-        // pero TODAS las palabras deben cumplirse (por eso el where() envolvente, no orWhere suelto)
         foreach ($palabras as $palabra) {
             $query->where(function ($q) use ($palabra) {
                 $q->whereHas('product', fn($qq) => $qq->where('nombre', 'like', "%{$palabra}%"))
