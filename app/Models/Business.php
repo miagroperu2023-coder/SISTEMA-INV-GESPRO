@@ -72,6 +72,21 @@ class Business extends Model
 
         $sede->cashiers()->create(['nombre' => 'Caja 1']);
 
+        // Cliente genérico "Cliente Varios" para boletas rápidas sin pedir datos al comprador.
+        // Como Customer está en el mismo namespace App\Models, no necesita 'use' aparte.
+        Customer::firstOrCreate(
+            [
+                'business_location_id' => $sede->id,
+                'numero_documento' => '00000000',
+            ],
+            [
+                'tipo_documento' => 'dni',
+                'nombre_razon_social' => 'Cliente Varios',
+                'direccion' => null,
+                'estado' => 'ACTIVO',
+            ]
+        );
+
         if ($this->tipo_documento === 'ruc') {
             VoucherSeries::create(['business_location_id' => $sede->id, 'tipo_comprobante' => 'boleta', 'serie' => 'B001']);
             VoucherSeries::create(['business_location_id' => $sede->id, 'tipo_comprobante' => 'factura', 'serie' => 'F001']);

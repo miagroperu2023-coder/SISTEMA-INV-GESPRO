@@ -24,6 +24,8 @@ new class extends Component
         return Voucher::with('items.variant.product', 'items.variant.size', 'payments')
             ->where('business_location_id', session('sede_activa_id'))
             ->whereBetween('fecha', [$this->fecha_inicio, $this->fecha_fin])
+            ->orderBy('fecha')         // ordena por la fecha real de la venta
+            ->orderBy('created_at')    // y dentro del mismo día, por hora de registro
             ->get()
             ->flatMap(function ($voucher) {
                 return $voucher->items->map(function ($item) use ($voucher) {
