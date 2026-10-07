@@ -34,7 +34,7 @@
             <tbody>
                 @forelse ($filas as $fila)
                     <tr>
-                        <td>{{$fila->id}} - {{ $fila->fecha->format('d/m/Y') }}</td>
+                        <td>{{ $fila->id }} - {{ $fila->fecha->format('d/m/Y') }}</td>
                         <td>{{ $fila->comprobante }}</td>
                         <td>{{ $fila->producto }}</td>
                         <td>{{ $fila->talla }}</td>
