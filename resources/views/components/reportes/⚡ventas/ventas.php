@@ -30,6 +30,7 @@ new class extends Component
             ->flatMap(function ($voucher) {
                 return $voucher->items->map(function ($item) use ($voucher) {
                     return (object) [
+                        'id' => $voucher->id,
                         'fecha' => $voucher->fecha,
                         'comprobante' => strtoupper($voucher->tipo_comprobante) . ($voucher->serie ? "-{$voucher->serie}-{$voucher->numero}" : ''),
                         'producto' => $item->variant->product->nombre,

@@ -34,6 +34,7 @@
             <tbody>
                 @forelse ($filas as $fila)
                     <tr>
+                        <input type="hidden" value="{{$fila->id}}">
                         <td>{{ $fila->fecha->format('d/m/Y') }}</td>
                         <td>{{ $fila->comprobante }}</td>
                         <td>{{ $fila->producto }}</td>
