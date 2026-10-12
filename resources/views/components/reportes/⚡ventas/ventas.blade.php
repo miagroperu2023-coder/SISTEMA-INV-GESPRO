@@ -21,6 +21,7 @@
         <table class="table table-sm table-striped">
             <thead>
                 <tr>
+                    <th>N°</th>
                     <th>Fecha</th>
                     <th>Comprobante</th>
                     <th>Producto</th>
@@ -36,7 +37,8 @@
                 @forelse ($filas as $fila)
                     <tr>
                         {{-- <td>{{ $fila->id }} - {{ $fila->fecha->format('d/m/Y') }}</td> --}}
-                        <td>{{ $loop->iteration }}. {{ $fila->fecha->format('d/m/Y') }}</td>
+                        <td>{{ $loop->iteration }}. </td>
+                        <td>{{ $fila->fecha->format('d/m/Y') }}</td>
                         <td>{{ $fila->comprobante }}</td>
                         <td>{{ $fila->producto }}</td>
                         <td>{{ $fila->talla }}</td>
@@ -51,7 +53,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="9" class="text-center text-muted">No hay ventas en ese rango de fechas.</td>
+                        <td colspan="10" class="text-center text-muted">No hay ventas en ese rango de fechas.</td>
                     </tr>
                 @endforelse
             </tbody>
