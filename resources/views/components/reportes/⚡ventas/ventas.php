@@ -103,8 +103,13 @@ new class extends Component
 
     public function render()
     {
+        $filas = $this->obtenerFilas();
+
         return $this->view([
-            'filas' => $this->obtenerFilas(),
+            'filas' => $filas,
+            'filasPorFecha' => $filas
+                ->groupBy(fn($f) => $f->fecha->format('Y-m-d'))
+                ->sortKeysDesc(), // el día más reciente primero
             'totalesPorMetodo' => $this->obtenerTotalesPorMetodo(),
             'resumenGanancia' => $this->obtenerGanancia(),
         ]);
