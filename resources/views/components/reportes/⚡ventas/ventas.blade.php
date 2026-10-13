@@ -106,7 +106,7 @@
                                             $primera = $loop->first || $items[$loop->index - 1]->id !== $fila->id;
                                         @endphp
                                         <tr
-                                            class="{{ $primera && !$loop->first ? 'border-top border-2 border-primary' : '' }}">
+                                            class="{{ $primera && !$loop->first ? '' : '' }}">
                                             <td>{{ $loop->iteration }}.</td>
                                             <td>{{ $fila->comprobante }}</td>
                                             <td>{{ $fila->producto }}</td>
