@@ -77,17 +77,9 @@ new class extends Component
     public function cancelar()
     {
         $this->reset([
-            'anulandoItemId',
-            'cantidadAnular',
-            'pagoId',
-            'motivo',
-            'cambiandoItemId',
-            'cantidadCambio',
-            'busquedaNueva',
-            'resultadosNuevos',
-            'nuevaVariantId',
-            'precioNuevo',
-            'metodoDiferencia',
+            'anulandoItemId', 'cantidadAnular', 'pagoId', 'motivo',
+            'cambiandoItemId', 'cantidadCambio', 'busquedaNueva',
+            'resultadosNuevos', 'nuevaVariantId', 'precioNuevo', 'metodoDiferencia',
         ]);
         $this->resetErrorBag();
     }
@@ -458,6 +450,15 @@ new class extends Component
             ->orderBy('id')
             ->get();
 
+        // historial de cambios y anulaciones de la sede, dentro del mismo rango de fechas
+        $historial = VoucherChange::with('user')
+            ->where('business_location_id', session('sede_activa_id'))
+            ->whereDate('created_at', '>=', $this->fecha_inicio)
+            ->whereDate('created_at', '<=', $this->fecha_fin)
+            ->latest()
+            ->limit(100)
+            ->get();
+
         $nuevaVariant = $this->nuevaVariantId
             ? ProductVariant::with(['product', 'size'])->find($this->nuevaVariantId)
             : null;
@@ -467,6 +468,7 @@ new class extends Component
                 ->groupBy(fn($i) => $i->voucher->fecha->format('Y-m-d'))
                 ->sortKeysDesc(),
             'nuevaVariant' => $nuevaVariant,
+            'historial' => $historial,
         ]);
     }
 };

@@ -375,4 +375,99 @@
             <p class="text-center text-muted py-3">No hay ventas en ese rango de fechas.</p>
         @endforelse
     </div>
-</div>
+
+    {{-- ───────── Historial de cambios y anulaciones ───────── --}}
+    <div class="d-flex justify-content-between align-items-end flex-wrap gap-1 mb-2">
+        <h3 class="h5 fw-bold mb-0">Historial de cambios y anulaciones</h3>
+        @if ($historial->isNotEmpty())
+            @php $netoCambios = $historial->where('tipo', 'cambio')->sum('diferencia'); @endphp
+            <span class="small text-muted">
+                {{ $historial->count() }} registro(s) ·
+                Diferencia neta de cambios:
+                <strong class="{{ $netoCambios < 0 ? 'text-danger' : 'text-success' }}">
+                    {{ $netoCambios < 0 ? '−' : '+' }}S/ {{ number_format(abs($netoCambios), 2) }}
+                </strong>
+            </span>
+        @endif
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-sm table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Fecha y hora</th>
+                    <th>Tipo</th>
+                    <th>Ticket</th>
+                    <th>Sale (devuelta / anulada)</th>
+                    <th>Entra (prenda nueva)</th>
+                    <th class="text-end">Diferencia</th>
+                    <th>Método</th>
+                    <th>Motivo</th>
+                    <th>Usuario</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($historial as $c)
+                    <tr wire:key="hist-{{ $c->id }}">
+                        <td class="text-nowrap">{{ $c->created_at->format('d/m/Y H:i') }}</td>
+                        <td>
+                            @switch($c->tipo)
+                                @case('cambio')
+                                    <span class="badge bg-primary">Cambio</span>
+                                @break
+
+                                @case('anulacion_producto')
+                                    <span class="badge bg-warning text-dark">Anulación de producto</span>
+                                @break
+
+                                @case('anulacion_venta')
+                                    <span class="badge bg-danger">Venta anulada</span>
+                                @break
+                            @endswitch
+                        </td>
+                        <td>#{{ $c->voucher_id }}</td>
+                        <td>
+                            {{ $c->descripcion_anterior }}
+                            <div class="small text-muted">
+                                {{ $c->cantidad }} u. · S/ {{ number_format($c->precio_anterior, 2) }} c/u
+                            </div>
+                        </td>
+                        <td>
+                            @if ($c->tipo === 'cambio')
+                                {{ $c->descripcion_nueva }}
+                                <div class="small text-muted">
+                                    {{ $c->cantidad }} u. · S/ {{ number_format($c->precio_nuevo, 2) }} c/u
+                                </div>
+                            @else
+                                <span class="text-muted">—</span>
+                            @endif
+                        </td>
+                        <td class="text-end text-nowrap">
+                            @if ($c->diferencia > 0)
+                                <span class="text-success fw-bold">+S/ {{ number_format($c->diferencia, 2) }}</span>
+                            @elseif ($c->diferencia < 0)
+                                <span class="text-danger fw-bold">−S/
+                                    {{ number_format(abs($c->diferencia), 2) }}</span>
+                            @else
+                                <span class="text-muted">S/ 0.00</span>
+                            @endif
+                        </td>
+                        <td>{{ $c->metodo_pago ? ucfirst($c->metodo_pago) : '—' }}</td>
+                        <td class="small">{{ $c->motivo ?: '—' }}</td>
+                        <td class="small">{{ $c->user->name ?? '—' }}</td>
+                    </tr>
+                    @empty
+                        <tr>
+                            <td colspan="9" class="text-center text-muted py-3">
+                                No hay cambios ni anulaciones en ese rango de fechas.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        @if ($historial->count() >= 100)
+            <p class="small text-muted">Se muestran los últimos 100 registros del rango. Acorta las fechas para ver otros.
+            </p>
+        @endif
+    </div>
