@@ -65,7 +65,7 @@
                                                 $items[$loop->index - 1]->voucher_id !== $fila->voucher_id;
                                         @endphp
                                         <tr wire:key="item-{{ $fila->id }}"
-                                            class="{{ $primera && !$loop->first ? '' : '' }}">
+                                            class="{{ $primera && !$loop->first ? 'border-top border-2 border-secondary' : '' }}">
                                             <td>{{ $loop->iteration }}.</td>
                                             <td>{{ strtoupper($fila->voucher->tipo_comprobante) }}</td>
                                             <td>{{ $fila->variant->product->nombre }}</td>
@@ -177,13 +177,13 @@
                                             @php
                                                 $pagos = $fila->voucher->payments;
                                                 $cant = max(1, min((int) $cantidadCambio, (int) $fila->cantidad));
+                                                $precioEfectivo = is_numeric($precioNuevo)
+                                                    ? (float) $precioNuevo
+                                                    : ($nuevaVariant
+                                                        ? (float) $nuevaVariant->precio_venta
+                                                        : 0);
                                                 $diferencia = $nuevaVariant
-                                                    ? round(
-                                                        ((float) $nuevaVariant->precio_venta -
-                                                            (float) $fila->precio_venta) *
-                                                            $cant,
-                                                        2,
-                                                    )
+                                                    ? round(($precioEfectivo - (float) $fila->precio_venta) * $cant, 2)
                                                     : null;
                                             @endphp
                                             <tr wire:key="panel-cambio-{{ $fila->id }}">
@@ -221,12 +221,28 @@
                                                                             {{ $nuevaVariant->product->nombre }} —
                                                                             {{ $nuevaVariant->color }} —
                                                                             {{ $nuevaVariant->size->valor }}
-                                                                            · S/
+                                                                            · Lista: S/
                                                                             {{ number_format($nuevaVariant->precio_venta, 2) }}
                                                                             · Stock: {{ $nuevaVariant->stock }}
                                                                         </span>
                                                                         <button type="button" wire:click="quitarNueva"
                                                                             class="btn btn-sm btn-link py-0">Quitar</button>
+                                                                    </div>
+
+                                                                    <div class="mt-2" style="max-width: 220px;">
+                                                                        <label class="form-label small mb-0">Precio de
+                                                                            venta (editable)</label>
+                                                                        <div class="input-group input-group-sm">
+                                                                            <span class="input-group-text">S/</span>
+                                                                            <input type="number" step="0.01"
+                                                                                min="0.01" inputmode="decimal"
+                                                                                wire:model.live.debounce.400ms="precioNuevo"
+                                                                                class="form-control">
+                                                                        </div>
+                                                                        @error('precioNuevo')
+                                                                            <div class="text-danger small">
+                                                                                {{ $message }}</div>
+                                                                        @enderror
                                                                     </div>
                                                                 @else
                                                                     <input type="text"

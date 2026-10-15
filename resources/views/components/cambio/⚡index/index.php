@@ -24,6 +24,7 @@ new class extends Component
     public $busquedaNueva = '';
     public $resultadosNuevos = [];
     public $nuevaVariantId = null;
+    public $precioNuevo = null; // precio de venta de la prenda nueva (editable; por defecto el de lista)
     public $metodoDiferencia = 'efectivo'; // cómo paga la diferencia cuando la prenda nueva es más cara
 
     public function mount()
@@ -85,6 +86,7 @@ new class extends Component
             'busquedaNueva',
             'resultadosNuevos',
             'nuevaVariantId',
+            'precioNuevo',
             'metodoDiferencia',
         ]);
         $this->resetErrorBag();
@@ -238,6 +240,7 @@ new class extends Component
     public function seleccionarNueva($variantId)
     {
         $this->nuevaVariantId = (int) $variantId;
+        $this->precioNuevo = ProductVariant::whereKey($variantId)->value('precio_venta');
         $this->busquedaNueva = '';
         $this->resultadosNuevos = [];
         $this->resetErrorBag('nuevaVariantId');
@@ -246,6 +249,7 @@ new class extends Component
     public function quitarNueva()
     {
         $this->nuevaVariantId = null;
+        $this->precioNuevo = null;
     }
 
     public function confirmarCambio()
@@ -262,6 +266,7 @@ new class extends Component
 
         $this->validate([
             'cantidadCambio' => 'required|integer|min:1|max:' . $item->cantidad,
+            'precioNuevo' => 'required|numeric|min:0.01|max:99999',
             'metodoDiferencia' => 'required|in:yape,plin,efectivo,tarjeta',
             'motivo' => 'nullable|string|max:255',
         ]);
@@ -282,7 +287,7 @@ new class extends Component
 
         $cantidad = (int) $this->cantidadCambio;
         $precioAnterior = (float) $item->precio_venta;
-        $precioNuevo = (float) $nueva->precio_venta;
+        $precioNuevo = round((float) $this->precioNuevo, 2); // el que escribió el vendedor (puede ser distinto al de lista)
         $diferencia = round(($precioNuevo - $precioAnterior) * $cantidad, 2); // + paga más · − se devuelve
 
         if ($diferencia < 0 && $voucher->payments->count() > 1 && !$voucher->payments->contains('id', (int) $this->pagoId)) {
