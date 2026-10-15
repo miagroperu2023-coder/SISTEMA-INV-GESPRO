@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\cambio\CambioController;
 use App\Http\Controllers\cashier\CashierShiftController;
 use App\Http\Controllers\category\CategoryController;
 use App\Http\Controllers\client\ClientController;
@@ -54,5 +55,6 @@ Route::middleware(['auth', 'suscripcion_activa'])->group(function () {
         Route::get('/comprobantes', [ComprobanteController::class, 'index'])->name('comprobantes.index');
         Route::get('/series', [SerieController::class, 'index'])->name('series.index');
         Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
+        Route::get('/cambio-o-devoluacion', [CambioController::class, 'index'])->name('cambio.index');
     });
 });

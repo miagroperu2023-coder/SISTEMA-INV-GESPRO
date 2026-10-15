@@ -77,6 +77,11 @@
                             href="{{ route('reports.index') }}">Reportes</a>
                     </li>
 
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('cambio.index') ? 'active' : '' }}"
+                            href="{{ route('cambio.index') }}">Cambio/devolución</a>
+                    </li>
+
                     @livewire('sede.sede-selector')
                 @endif
 
