@@ -65,7 +65,7 @@
                                                 $items[$loop->index - 1]->voucher_id !== $fila->voucher_id;
                                         @endphp
                                         <tr wire:key="item-{{ $fila->id }}"
-                                            class="{{ $primera && !$loop->first ? 'border-top border-2 border-secondary' : '' }}">
+                                            class="{{ $primera && !$loop->first ? '' : '' }}">
                                             <td>{{ $loop->iteration }}.</td>
                                             <td>{{ strtoupper($fila->voucher->tipo_comprobante) }}</td>
                                             <td>{{ $fila->variant->product->nombre }}</td>

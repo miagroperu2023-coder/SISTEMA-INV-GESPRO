@@ -151,12 +151,13 @@
             <div class="mb-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <label class="form-label small mb-0">Pagos</label>
-                    <button wire:click="agregarPago" class="btn btn-sm btn-outline-secondary">+ Agregar pago</button>
+                    <button wire:click="agregarPago" class="btn btn-sm btn-primary">+ Agregar pago</button>
                 </div>
+
                 @foreach ($pagos as $index => $pago)
                     <div class="row g-2 mb-1 align-items-center" wire:key="pago-{{ $index }}">
                         <div class="col-5">
-                            <select wire:model="pagos.{{ $index }}.metodo_pago"
+                            <select wire:model.live="pagos.{{ $index }}.metodo_pago"
                                 class="form-select form-select-sm">
                                 <option value="yape">Yape</option>
                                 <option value="plin">Plin</option>
@@ -166,8 +167,8 @@
                         </div>
                         <div class="col-4">
                             <input type="number" step="0.01" inputmode="decimal"
-                                wire:model="pagos.{{ $index }}.monto" class="form-control form-control-sm"
-                                placeholder="Monto">
+                                wire:model.live.debounce.300ms="pagos.{{ $index }}.monto"
+                                class="form-control form-control-sm" placeholder="Monto">
                         </div>
                         <div class="col-2">
                             <button wire:click="completarMonto({{ $index }})"
@@ -179,6 +180,29 @@
                         </div>
                     </div>
                 @endforeach
+
+                {{-- Solo aparece si algún pago es en efectivo --}}
+                @if (collect($pagos)->contains('metodo_pago', 'efectivo'))
+                    @php $vuelto = $this->vuelto; @endphp
+
+                    <div class="row g-2 mt-2 align-items-end">
+                        <div class="col-6">
+                            <label class="form-label small mb-0">Cliente entrega (efectivo)</label>
+                            <input type="number" step="0.01" inputmode="decimal"
+                                wire:model.live.debounce.300ms="recibido" class="form-control form-control-sm"
+                                placeholder="Ej: 100">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small mb-0">Vuelto</label>
+                            <input type="text" readonly placeholder="S/ 0.00"
+                                class="form-control form-control-sm fw-bold {{ $vuelto === null ? '' : ($vuelto >= 0 ? 'text-success' : 'text-danger') }}"
+                                value="{{ $vuelto === null ? '' : ($vuelto >= 0 ? 'S/ ' . number_format($vuelto, 2) : 'Falta S/ ' . number_format(abs($vuelto), 2)) }}">
+                        </div>
+                    </div>
+                    <p class="small text-muted mb-0 mt-1">
+                        A cobrar en efectivo: S/ {{ number_format($this->efectivoACobrar, 2) }}
+                    </p>
+                @endif
             </div>
 
             <div class="d-flex justify-content-between align-items-center">

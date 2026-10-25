@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 new class extends Component
 {
+    public $recibido = '';
     public $busqueda = '';
     public $resultados = [];
     public $items = [];
@@ -180,6 +181,29 @@ new class extends Component
         return collect($this->pagos)->sum(fn($pago) => (float) ($pago['monto'] ?? 0));
     }
 
+    public function getEfectivoACobrarProperty()
+    {
+        $efectivo = collect($this->pagos)
+            ->where('metodo_pago', 'efectivo')
+            ->sum(fn($p) => (float) ($p['monto'] ?? 0));
+
+        if ($efectivo > 0) {
+            return round($efectivo, 2);
+        }
+
+        // si aún no escribió el monto, se usa lo que falta por cobrar
+        return round(max(0, $this->total - $this->totalPagado), 2);
+    }
+
+    public function getVueltoProperty()
+    {
+        if ($this->recibido === '' || $this->recibido === null) {
+            return null;
+        }
+
+        return round((float) $this->recibido - $this->efectivoACobrar, 2);
+    }
+
     protected function negocioActivo()
     {
         $sede = \App\Models\BusinessLocation::find(session('sede_activa_id'));
@@ -306,7 +330,7 @@ new class extends Component
         session()->flash('ok', 'Venta registrada correctamente.');
         session()->flash('venta_id', $voucher->id);
 
-        $this->reset(['items', 'customer_id', 'tipo_comprobante', 'numero_documento', 'clienteEncontradoNombre', 'clienteNoEncontrado']);
+        $this->reset(['items', 'customer_id', 'tipo_comprobante', 'numero_documento', 'clienteEncontradoNombre', 'clienteNoEncontrado', 'recibido']);
         $this->pagos = [['metodo_pago' => 'yape', 'monto' => null]];
     }
 
