@@ -78,6 +78,11 @@
                     </li>
 
                     <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('investment.index') ? 'active' : '' }}"
+                            href="{{ route('investment.index') }}">Inversiones</a>
+                    </li>
+
+                    <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('cambio.index') ? 'active' : '' }}"
                             href="{{ route('cambio.index') }}">Cambio/devolución</a>
                     </li>
